@@ -64,7 +64,7 @@
         </activity>
         <activity
             android:name=".activities.MainActivity"
-            android:exported="false"
+            android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
     </application>

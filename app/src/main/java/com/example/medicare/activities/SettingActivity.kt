@@ -1,5 +1,6 @@
 package com.example.medicare.activities
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -187,6 +188,7 @@ class SettingActivity : BaseActivity() {
 
         finish()
     }
+    @SuppressLint("SuspiciousIndentation")
     fun setUserDataInUI(user: User) {
         mUserDetails = user
 
