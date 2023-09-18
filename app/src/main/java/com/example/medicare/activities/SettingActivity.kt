@@ -2,6 +2,7 @@ package com.example.medicare.activities
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.Dialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -26,9 +27,9 @@ import com.google.firebase.storage.StorageReference
 import de.hdodenhof.circleimageview.CircleImageView
 import java.io.IOException
 
-class SettingActivity : BaseActivity() {
+class SettingActivity : AppCompatActivity() {
     private var binding: ActivitySettingBinding? =null
-
+    private lateinit var mProgressDialog: Dialog
 
     private var mSelectedImageFileUri: Uri? = null
 
@@ -40,7 +41,7 @@ class SettingActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding?.root)
         setupActionBar()
-
+        showProgressDialog("Please Wait")
         FirestoreClass().loadUserData(this)
 
 
@@ -69,7 +70,31 @@ class SettingActivity : BaseActivity() {
 
 
     }
+    fun showProgressDialog(text: String) {
+        mProgressDialog = Dialog(this)
 
+        /*Set the screen content from a layout resource.
+        The resource will be inflated, adding all top-level views to the screen.*/
+        mProgressDialog.setContentView(R.layout.dialog_progress)
+
+        val tvProgressText: TextView = mProgressDialog.findViewById(R.id.tv_progress_text)
+        tvProgressText.text = text
+
+        //Start the dialog and display it on screen.
+        mProgressDialog.show()
+    }
+     fun hideProgressDialog() {
+        mProgressDialog.dismiss()
+    }
+    override fun onBackPressed() {
+        super.onBackPressed()
+
+        // Navigate to MainActivity with the home menu item selected
+        val intent = Intent(this, MainActivity::class.java)
+        intent.putExtra("selectedItemId", R.id.home) // Pass the ID of the home menu item
+        startActivity(intent)
+        finish()
+    }
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -183,13 +208,14 @@ class SettingActivity : BaseActivity() {
     // END
     fun profileUpdateSuccess() {
 
-        hideProgressDialog()
+
         setResult(Activity.RESULT_OK)
 
         finish()
     }
     @SuppressLint("SuspiciousIndentation")
     fun setUserDataInUI(user: User) {
+        hideProgressDialog()
         mUserDetails = user
 
         val iv_user_image = findViewById<CircleImageView>(R.id.iv_profile_user_image)

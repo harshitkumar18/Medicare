@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace 'com.example.medicare'
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.example.medicare"
@@ -46,12 +46,15 @@ dependencies {
     implementation 'androidx.annotation:annotation:1.6.0'
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.6.1'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.7.1'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.7.1'
+    implementation 'com.google.firebase:firebase-messaging-ktx:23.2.1'
     testImplementation 'junit:junit:4.13.2'
     implementation platform('com.google.firebase:firebase-bom:32.1.1')
     implementation 'com.google.firebase:firebase-auth:22.0.0' //firebase
     implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation 'com.google.firebase:firebase-storage:20.2.1'
-
+    implementation platform('com.google.firebase:firebase-bom:32.1.1')
     implementation 'com.github.bumptech.glide:glide:4.11.0' // set profile image
     implementation 'com.github.bumptech.glide:compiler:4.11.0' // set profile image
     implementation 'de.hdodenhof:circleimageview:3.1.0' // rounded images

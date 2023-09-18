@@ -5,6 +5,8 @@ import android.app.Activity
 import android.util.Log
 import android.widget.Toast
 import com.example.medicare.activities.*
+import com.example.medicare.models.Doctor
+import com.example.medicare.models.Speciality
 
 import com.example.medicare.utils.Constants
 import com.example.medicare.models.User
@@ -41,7 +43,7 @@ class FirestoreClass {
                     }
                     is MainActivity ->{
                         if (loggedInUser != null) {
-//                            activity.updateNavigationUserDetails(loggedInUser,readBoardsList)
+                            activity.updateNavigationUserDetails(loggedInUser,readBoardsList)
                         }
                     }
                     is SettingActivity ->{
@@ -49,6 +51,7 @@ class FirestoreClass {
                             activity.setUserDataInUI(loggedInUser)
                         }
                     }
+
                 }
 
 
@@ -114,39 +117,113 @@ class FirestoreClass {
 //                )
 //            }
 //    }
-//    fun getBoardsList(activity: MainActivity) {
-//
-//        // The collection name for BOARDS
-//        mfirestore.collection(Constants.BOARDS)
-//            // A where array query as we want the list of the board in which the user is assigned. So here you can pass the current user id.
-//            .whereArrayContains(Constants.ASSIGNED_TO, getCurrentUserID())
-//            .get() // Will get the documents snapshots.
-//            .addOnSuccessListener { document ->
-//                // Here we get the list of boards in the form of documents.
-//                Log.e(activity.javaClass.simpleName, document.documents.toString())
-//                // Here we have created a new instance for Boards ArrayList.
-//                val boardsList: ArrayList<Board> = ArrayList()
-//
-//                // A for loop as per the list of documents to convert them into Boards ArrayList.
-//                for (i in document.documents) {
-//
-//                     val board = i.toObject(Board::class.java)!!
-//                    board.documentId = i.id
-//
-//                    boardsList.add(board)
-//                }
-//
-//                // Here pass the result to the base activity.
-//                activity.populateBoardsListToUI(boardsList)
-//            }
-//            .addOnFailureListener { e ->
-//
-//                activity.hideProgressDialog()
-//                Log.e(activity.javaClass.simpleName, "Error while creating a board.", e)
-//            }
-//    }
-//    fun getBoardDetails(activity: TaskListActivity, documentId: String) {
-//        mfirestore.collection(Constants.BOARDS)
+    fun updatedoctordetails(activity: DoctorDescriptionActivity,doctorHashMap: HashMap<String, Any>,documentId: String) {
+    mfirestore.collection(Constants.DOCTOR) // Collection Name
+        .document(documentId) // Document ID
+        .update(doctorHashMap) // A hashmap of fields which are to be updated.
+        .addOnSuccessListener {
+            // Profile data is updated successfully.
+            Log.e(activity.javaClass.simpleName, "Profile Data updated successfully!")
+
+            Toast.makeText(activity, "Booking Confirmed", Toast.LENGTH_SHORT).show()
+        }
+    }
+    fun updateuserappointmentdetails(activity: DoctorDescriptionActivity,userHashMap: HashMap<String, Any>,documentId: String) {
+        mfirestore.collection(Constants.USERS) // Collection Name
+            .document(documentId) // Document ID
+            .update(userHashMap) // A hashmap of fields which are to be updated.
+            .addOnSuccessListener {
+                // Profile data is updated successfully.
+                Log.e(activity.javaClass.simpleName, "Profile Data updated successfully!")
+
+                Toast.makeText(activity, "Booking Confirmed", Toast.LENGTH_SHORT).show()
+            }
+    }
+    fun getDoctorsList(activity: Details_of_Doctors, expertise: String) {
+
+    // The collection name for DOCTORS
+    mfirestore.collection(Constants.DOCTOR)
+        // Use "whereArrayContains" to query an array field. You should provide the field name and value.
+        .whereEqualTo("speciality", expertise) // Assuming "specialities" is the field containing expertise values.
+        .get()
+        .addOnSuccessListener { document ->
+            // Here we get the list of doctors in the form of documents.
+            Log.e(activity.javaClass.simpleName, document.documents.toString())
+            // Here we have created a new instance for Doctors ArrayList.
+            val doctorList: ArrayList<Doctor> = ArrayList()
+
+            // A for loop to convert the documents into Doctors objects.
+            for (doc in document.documents) {
+                val doctor = doc.toObject(Doctor::class.java)
+                if (doctor != null) {
+                    doctor.documentId = doc.id
+                }
+                if (doctor != null) {
+                    doctorList.add(doctor)
+                }
+            }
+
+            // Pass the result to the base activity.
+            activity.populateDoctorsListToUI(doctorList)
+        }
+        .addOnFailureListener { e ->
+            activity.hideProgressDialog()
+            Log.e(activity.javaClass.simpleName, "Error while fetching doctors.", e)
+        }
+}
+    fun getuserDetails(activity: DoctorDescriptionActivity, documentId: String) {
+        mfirestore.collection(Constants.USERS)
+            .document(documentId)
+            .get()
+            .addOnSuccessListener { document ->
+                Log.e(activity.javaClass.simpleName, document.toString())
+
+                val board = document.toObject(User::class.java)!!
+
+                // Send the result of board to the base activity.
+                activity.userDetails(board)
+            }
+            .addOnFailureListener { e ->
+                activity.hideProgressDialog()
+                Log.e(activity.javaClass.simpleName, "Error while creating a board.", e)
+            }
+    }
+    fun getuserDetailsinbooking(activity: BookingActivity, documentId: String) {
+        mfirestore.collection(Constants.USERS)
+            .document(documentId)
+            .get()
+            .addOnSuccessListener { document ->
+                Log.e(activity.javaClass.simpleName, document.toString())
+
+                val board = document.toObject(User::class.java)!!
+
+                // Send the result of board to the base activity.
+                activity.userDetails(board)
+            }
+            .addOnFailureListener { e ->
+                activity.hideProgressDialog()
+                Log.e(activity.javaClass.simpleName, "Error while creating a board.", e)
+            }
+    }
+    fun getdoctorDetails(activity: DoctorDescriptionActivity, documentId: String) {
+        mfirestore.collection(Constants.DOCTOR)
+            .document(documentId)
+            .get()
+            .addOnSuccessListener { document ->
+                Log.e(activity.javaClass.simpleName, document.toString())
+
+                val board = document.toObject(Doctor::class.java)!!
+
+                // Send the result of board to the base activity.
+                activity.doctorDetails(board)
+            }
+            .addOnFailureListener { e ->
+                activity.hideProgressDialog()
+                Log.e(activity.javaClass.simpleName, "Error while creating a board.", e)
+            }
+    }
+//    fun getappointmentDetails(activity: DoctorDescriptionActivity, documentId: String) {
+//        mfirestore.collection(Constants.DOCTOR)
 //            .document(documentId)
 //            .get()
 //            .addOnSuccessListener { document ->

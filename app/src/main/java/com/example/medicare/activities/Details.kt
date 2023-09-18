@@ -87,6 +87,7 @@ class Details : BaseActivity() {
                             )
                             FirestoreClass().registerUser(this, user)
                         } else {
+                            hideProgressDialog()
                             showErrorSnackBar("Registration Failed")
                         }
                     }
@@ -108,12 +109,16 @@ class Details : BaseActivity() {
                 showErrorSnackBar("Please enter age.")
                 false
             }
-            age.toIntOrNull() == null -> {
-                showErrorSnackBar("Please enter a valid numeric value for age.")
+            age.toIntOrNull() == null || age.toInt() !in 1..130 -> {
+                showErrorSnackBar("Please enter age between 1 to 130 years.")
                 false
             }
             TextUtils.isEmpty(mobile) -> {
                 showErrorSnackBar("Please enter mobile.")
+                false
+            }
+            mobile.length > 10 -> {
+                showErrorSnackBar("Please enter a valid mobile number.")
                 false
             }
             TextUtils.isEmpty(weight) -> {
@@ -124,10 +129,20 @@ class Details : BaseActivity() {
                 showErrorSnackBar("Please enter height.")
                 false
             }
+            height.toLongOrNull() == null || height.toLong() !in 50L..280L -> {
+                showErrorSnackBar("Height must be between 50 and 280 cm.")
+                false
+            }
+            weight.toLongOrNull() == null || weight.toLong() !in 20L..250L -> {
+                showErrorSnackBar("Weight must be between 20 and 250 kg.")
+                false
+            }
             else -> {
                 true
             }
         }
     }
+
+
 
 }

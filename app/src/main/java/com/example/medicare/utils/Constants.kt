@@ -5,16 +5,22 @@ import android.content.Intent
 import android.net.Uri
 import android.provider.MediaStore
 import android.webkit.MimeTypeMap
+import com.example.medicare.models.Appointment
 
 
 object Constants {
     const val USERS : String = "users"
 
     const val  BOARDS : String = "boards"
-
+    const val DOCTOR: String = "doctor"
+    const val SPECIALITY: String = "speciality"
     const val IMAGE: String = "image"
     const val NAME: String = "name"
     const val MOBILE: String = "mobile"
+    const val DOCTOR_MODEL: String = "doctor_model"
+    const val  APPOINTMENT: String = "appointment"
+    const val  USERAPPOINTMENT: String = "userappointment"
+    const val TIMING: String = "timing"
 
     const val ASSIGNED_TO: String = "assignedTo"
     const val READ_STORAGE_PERMISSION_CODE = 1

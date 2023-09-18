@@ -5,11 +5,16 @@
         android:icon="@drawable/ic_home_24"
         android:title="Home"  />
     <item
-        android:id="@+id/message"
+        android:id="@+id/bookings"
+        android:icon="@drawable/baseline_calendar_month_24"
+        android:title="Bookings" />
+    <item
+        android:id="@+id/webview_chatbot"
         android:icon="@drawable/ic_message_24"
-        android:title="Message" />
+        android:title="Chatbot" />
     <item
         android:id="@+id/settings"
-        android:icon="@drawable/ic_settings_24"
-        android:title="Settings" />
+        android:icon="@drawable/ic_user_place_holder"
+        android:title="Profile" />
+
 </menu>

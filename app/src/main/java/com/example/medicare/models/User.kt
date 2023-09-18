@@ -14,7 +14,8 @@ data class User(
     val height: Long = 0,
     val weight: Long = 0,
     val diabetic: String = "",
-    val gender: String = ""
+    val gender: String = "",
+    val userappointment: ArrayList<AppointmentUser> = ArrayList()
 ) : Parcelable {
     constructor(source: Parcel) : this(
         source.readString()!!,
@@ -27,7 +28,8 @@ data class User(
         source.readLong(),
         source.readLong(),
         source.readString()!!,
-        source.readString()!!
+        source.readString()!!,
+        source.createTypedArrayList(AppointmentUser.CREATOR) ?: ArrayList()
     )
 
     override fun describeContents() = 0
@@ -44,6 +46,7 @@ data class User(
         writeLong(weight)
         writeString(diabetic)
         writeString(gender)
+        writeTypedList(userappointment)
     }
 
     companion object {

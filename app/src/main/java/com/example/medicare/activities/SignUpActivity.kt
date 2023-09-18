@@ -85,9 +85,22 @@ class SignUpActivity : BaseActivity() {
 
 
     private fun validateForm(name: String, email: String, password: String): Boolean {
+        val emailPattern = "[a-zA-Z0-9._%+-]+@(?:gmail\\.com|yahoo\\.com|iiitu\\.ac\\.in)"
+
+
+        val namePattern = "^[a-zA-Z]+( [a-zA-Z]+)*$"
+
         return when {
             TextUtils.isEmpty(name) -> {
                 showErrorSnackBar("Please enter name.")
+                false
+            }
+            !name.matches(namePattern.toRegex()) -> {
+                showErrorSnackBar("Name should only contain alphabetic characters with at most one space between words.")
+                false
+            }
+            !email.matches(emailPattern.toRegex()) -> {
+                showErrorSnackBar("Please enter a valid email.")
                 false
             }
             TextUtils.isEmpty(email) -> {
@@ -98,10 +111,17 @@ class SignUpActivity : BaseActivity() {
                 showErrorSnackBar("Please enter password.")
                 false
             }
+            password.length < 8 -> {
+                showErrorSnackBar("Password must have at least 8 characters.")
+                false
+            }
             else -> {
                 true
             }
         }
     }
+
+
+
     // END
 }

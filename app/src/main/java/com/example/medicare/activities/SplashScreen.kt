@@ -16,7 +16,7 @@ class SplashScreen : AppCompatActivity() {
         Handler(Looper.getMainLooper()).postDelayed({
 
             finish()
-        }, 4900)
+        }, 9000)
 
         Handler().postDelayed({
             var currentUserID = FirestoreClass().getCurrentUserID()
