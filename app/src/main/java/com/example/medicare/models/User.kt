@@ -15,6 +15,7 @@ data class User(
     val weight: Long = 0,
     val diabetic: String = "",
     val gender: String = "",
+    val fcmToken: String = "",
     val userappointment: ArrayList<AppointmentUser> = ArrayList()
 ) : Parcelable {
     constructor(source: Parcel) : this(
@@ -27,6 +28,7 @@ data class User(
         source.readString()!!,
         source.readLong(),
         source.readLong(),
+        source.readString()!!,
         source.readString()!!,
         source.readString()!!,
         source.createTypedArrayList(AppointmentUser.CREATOR) ?: ArrayList()
@@ -46,6 +48,7 @@ data class User(
         writeLong(weight)
         writeString(diabetic)
         writeString(gender)
+        writeString(fcmToken)
         writeTypedList(userappointment)
     }
 

@@ -70,18 +70,19 @@ class FirestoreClass {
                 // Notify the success result.
                 when(activity){
                     is MainActivity ->{
-//                        activity.tokenUpdateSuccess()
+                        activity.tokenUpdateSuccess()
                     }
                     is SettingActivity ->{
                         activity.profileUpdateSuccess()
                     }
+
                 }
 
             }
             .addOnFailureListener { e ->
                 when(activity){
                     is MainActivity ->{
-//                        activity.hideProgressDialog()
+                        activity.hideProgressDialog()
                     }
                     is SettingActivity ->{
                         activity.hideProgressDialog()

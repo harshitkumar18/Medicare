@@ -2,6 +2,7 @@ package com.example.medicare.activities
 
 import DemoAdapter
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
@@ -22,6 +23,7 @@ import com.example.medicare.utils.Constants
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.messaging.FirebaseMessaging
 import de.hdodenhof.circleimageview.CircleImageView
 
 class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -40,7 +42,19 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding?.root)
+        mSharedPreferences = this.getSharedPreferences(
+            Constants.MEDICARE_PREFERENCES, Context.MODE_PRIVATE)
 
+        val tokenUpdated = mSharedPreferences.getBoolean(Constants.FCM_TOKEN_UPDATED,false)
+
+        if (tokenUpdated) {
+            // Get the current logged in user details.
+            FirestoreClass().loadUserData(this@MainActivity, true)
+        } else {
+            FirebaseMessaging.getInstance().token.addOnSuccessListener { instanceResult ->
+                updateFCMToken(instanceResult)
+            }
+        }
         FirestoreClass().loadUserData(this, true)
         showProgressDialog("Please Wait")
 
@@ -161,7 +175,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
             R.id.nav_sign_out -> {
                 FirebaseAuth.getInstance().signOut()
-//                mSharedPreferences.edit().clear().apply()
+                mSharedPreferences.edit().clear().apply()
 
                 val intent = Intent(this, IntroActivity::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -172,4 +186,26 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         binding?.drawerLayout?.closeDrawer(GravityCompat.START)
         return true
     }
+    fun tokenUpdateSuccess() {
+
+        hideProgressDialog()
+
+        // Here we have added a another value in shared preference that the token is updated in the database successfully.
+        // So we don't need to update it every time.
+        val editor: SharedPreferences.Editor = mSharedPreferences.edit()
+        editor.putBoolean(Constants.FCM_TOKEN_UPDATED, true)
+        editor.apply()
+
+        // Get the current logged in user details.
+        // Show the progress dialog.
+        showProgressDialog(resources.getString(R.string.please_wait))
+        FirestoreClass().loadUserData(this@MainActivity, true)
+    }
+    private fun updateFCMToken(token: String){
+        val userHashMap = HashMap<String,Any>()
+        userHashMap[Constants.FCM_TOKEN] = token
+        showProgressDialog(resources.getString(R.string.please_wait))
+        FirestoreClass().updateUserProfileData(this,userHashMap)
+    }
+
 }

@@ -1,9 +1,11 @@
 package com.example.medicare.activities
 
 import BookingListAdapter
+import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Intent
 import android.icu.text.SimpleDateFormat
+import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -18,6 +20,14 @@ import com.example.medicare.models.AppointmentUser
 import com.example.medicare.models.Doctor
 import com.example.medicare.models.User
 import com.example.medicare.utils.Constants
+import org.json.JSONObject
+import java.io.BufferedReader
+import java.io.DataOutputStream
+import java.io.IOException
+import java.io.InputStreamReader
+import java.net.HttpURLConnection
+import java.net.SocketTimeoutException
+import java.net.URL
 import java.text.ParseException
 import java.util.Locale
 
@@ -121,7 +131,7 @@ class BookingActivity : AppCompatActivity() {
         val rv_speciality_list = findViewById<RecyclerView>(R.id.bookingsRecyclerView)
         rv_speciality_list.layoutManager = LinearLayoutManager(this@BookingActivity)
 
-//        rv_speciality_list.setHasFixedSize(true)
+        rv_speciality_list.setHasFixedSize(true)
 
         // Create an instance of DoctorListAdapter and pass the doctor_List to it.
         val adapter = BookingListAdapter(this@BookingActivity, userbookings)
@@ -137,4 +147,5 @@ class BookingActivity : AppCompatActivity() {
             }
         })
     }
+
 }
