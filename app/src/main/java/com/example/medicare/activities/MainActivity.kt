@@ -1,23 +1,35 @@
 package com.example.medicare.activities
 
 import DemoAdapter
+import News
+
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
 import android.widget.TextView
+import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.android.volley.AuthFailureError
+import com.android.volley.Request
+import com.android.volley.Response
+import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.Volley
 import com.bumptech.glide.Glide
 import com.example.medicare.Firebase.FirestoreClass
 import com.example.medicare.R
+import com.example.medicare.adapter.NewsItemClicked
+import com.example.medicare.adapter.NewsListAdapter
 
 import com.example.medicare.databinding.ActivityMainBinding
+
 import com.example.medicare.models.User
 import com.example.medicare.utils.Constants
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -26,8 +38,9 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.messaging.FirebaseMessaging
 import de.hdodenhof.circleimageview.CircleImageView
 
-class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
-
+class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener,
+    NewsItemClicked {
+    private lateinit var mAdapter: NewsListAdapter
     private var bottomNav: BottomNavigationView? = null
     private var binding: ActivityMainBinding? = null
     private lateinit var mUserName: String
@@ -55,6 +68,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                 updateFCMToken(instanceResult)
             }
         }
+        newsuiset()
         FirestoreClass().loadUserData(this, true)
         showProgressDialog("Please Wait")
 
@@ -206,6 +220,74 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         userHashMap[Constants.FCM_TOKEN] = token
         showProgressDialog(resources.getString(R.string.please_wait))
         FirestoreClass().updateUserProfileData(this,userHashMap)
+    }
+    private fun newsuiset(){
+        val recyclerView = findViewById<RecyclerView>(R.id.newsRecyclerView1)
+
+// Create a LinearLayoutManager with horizontal orientation
+        val layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        recyclerView.layoutManager = layoutManager
+
+// Create an instance of your NewsListAdapter
+        mAdapter = NewsListAdapter(this)
+
+// Set the adapter for the RecyclerView
+        recyclerView.adapter = mAdapter
+        showProgressDialog("Please Wait")
+
+// Fetch and populate data in your adapter (assuming fetchData() does this)
+        fetchData()
+
+    }
+    private fun fetchData(){
+        hideProgressDialog()
+        val queue = Volley.newRequestQueue(this)
+        val url =
+            "\n" +
+                    "\n" +
+                    "https://newsapi.org/v2/top-headlines?country=in&category=health&apiKey=6234c5797107411c9908d3fd4722d14d"
+        val getRequest: JsonObjectRequest = object : JsonObjectRequest(
+            Request.Method.GET,
+            url,
+            null,
+            Response.Listener {
+                Log.e("sdsadas","$it")
+                val newsJsonArray = it.getJSONArray("articles")
+                val newsArray = ArrayList<News>()
+                for(i in 0 until  newsJsonArray.length()){
+                    val newsJsonObject = newsJsonArray.getJSONObject(i)
+                    val news = News(
+                        newsJsonObject.getString("author"),
+                        newsJsonObject.getString("title"),
+                        newsJsonObject.getString("url"),
+                        newsJsonObject.getString("urlToImage")
+                    )
+
+                    newsArray.add(news)
+                }
+                mAdapter.updateNews(newsArray)
+            },
+            Response.ErrorListener { error ->
+
+            }
+        ) {
+            @Throws(AuthFailureError::class)
+            override fun getHeaders(): Map<String, String> {
+                val params: MutableMap<String, String> = HashMap()
+                params["User-Agent"] = "Mozilla/5.0"
+                return params
+            }
+        }
+        queue.add(getRequest)
+    }
+
+
+
+    override fun onitemClicked(item: News) {
+        val intent = Intent(this@MainActivity,NewsAppDetail::class.java)
+        intent.putExtra("news_item", item)
+        startActivity(intent)
+
     }
 
 }

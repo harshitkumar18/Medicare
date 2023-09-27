@@ -13,6 +13,11 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+
+import com.android.volley.Request
+import com.android.volley.Response
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
 import com.bumptech.glide.Glide
 import com.example.medicare.Firebase.FirestoreClass
 import com.example.medicare.R
@@ -39,6 +44,7 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 import kotlin.random.Random
+
 
 class DoctorDescriptionActivity : BaseActivity() {
     var timeselected: String = ""
@@ -308,6 +314,7 @@ class DoctorDescriptionActivity : BaseActivity() {
                                 SendNotificationToUserAsyncTask(mdoctorDetails.name,muserDetails.fcmToken ).execute()
 
                                 startActivity(Intent(this@DoctorDescriptionActivity, MainActivity::class.java))
+
                                 finish()
                             }
                     }

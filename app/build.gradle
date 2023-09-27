@@ -64,4 +64,9 @@ dependencies {
     implementation 'com.google.firebase:firebase-messaging:23.1.2' //   Notification feature
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    implementation group: 'com.twilio.sdk', name: 'twilio', version: '8.35.0'
+
+    implementation'com.android.volley:volley-cronet:1.2.1'
+    implementation'com.android.volley:volley:1.2.1'
+    implementation 'androidx.recyclerview:recyclerview-selection:1.1.0'
 }
