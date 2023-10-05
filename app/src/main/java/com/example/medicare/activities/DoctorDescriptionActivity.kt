@@ -1,11 +1,18 @@
 // DoctorDescriptionActivity.kt
 package com.example.medicare.activities
 
+
 import TimingAdapter
 import android.annotation.SuppressLint
+import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.AsyncTask
 import android.os.Bundle
+import android.os.StrictMode
+
+import kotlinx.coroutines.launch
+import android.telecom.Call
+import android.util.Base64
 import android.util.Log
 import android.view.View
 import android.widget.Button
@@ -13,14 +20,12 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-
-import com.android.volley.Request
 import com.android.volley.Response
-import com.android.volley.toolbox.StringRequest
-import com.android.volley.toolbox.Volley
 import com.bumptech.glide.Glide
 import com.example.medicare.Firebase.FirestoreClass
 import com.example.medicare.R
+import com.example.medicare.activities.DoctorDescriptionActivity.TwilioConstants.ACCOUNT_SID
+import com.example.medicare.activities.DoctorDescriptionActivity.TwilioConstants.AUTH_TOKEN
 import com.example.medicare.adapter.TimingAdapterLatest
 import com.example.medicare.models.Appointment
 import com.example.medicare.models.AppointmentUser
@@ -31,7 +36,24 @@ import com.example.medicare.models.User
 import com.example.medicare.utils.Constants
 import com.google.firebase.firestore.FirebaseFirestore
 import de.hdodenhof.circleimageview.CircleImageView
+import okhttp3.FormBody
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import okhttp3.*
+
+import okhttp3.ResponseBody
 import org.json.JSONObject
+import retrofit2.Callback
+
+import retrofit2.Retrofit
+import retrofit2.http.FieldMap
+import retrofit2.http.FormUrlEncoded
+import retrofit2.http.Header
+import retrofit2.http.POST
+import retrofit2.http.Path
 import java.io.BufferedReader
 import java.io.DataOutputStream
 import java.io.IOException
@@ -44,7 +66,18 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 import kotlin.random.Random
+import org.apache.http.HttpEntity
+import org.apache.http.HttpResponse
+import org.apache.http.NameValuePair
+import org.apache.http.client.ClientProtocolException
+import org.apache.http.client.entity.UrlEncodedFormEntity
+import org.apache.http.client.methods.HttpPost
+import org.apache.http.impl.client.DefaultHttpClient
+import org.apache.http.message.BasicNameValuePair
+import org.apache.http.util.EntityUtils
 
+import java.util.ArrayList
+import kotlin.collections.List
 
 class DoctorDescriptionActivity : BaseActivity() {
     var timeselected: String = ""
@@ -59,6 +92,11 @@ class DoctorDescriptionActivity : BaseActivity() {
     var muserDetails: User = User()
     var mdoctorDetails: Doctor = Doctor()
     var datelistnew: ArrayList<String> = ArrayList()
+    object TwilioConstants {
+        const val ACCOUNT_SID = "AC0dc5ab3e773a73754e063e0da86cba1b"
+        const val AUTH_TOKEN = "242aecf13b1652243624a92ee5b7b2fb"
+        const val FROM_PHONE_NUMBER = "+12568418319"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,7 +104,14 @@ class DoctorDescriptionActivity : BaseActivity() {
         setContentView(R.layout.activity_doctor_description)
         val selectedDoctor = intent.getParcelableExtra<Doctor>(Constants.DOCTOR_MODEL)
         Log.e("DoctorDescriptionActivity_Doctor", "Selected Doctor: ${selectedDoctor}")
-
+        findViewById<Button>(R.id.view_on_map).setOnClickListener {
+            val intent = Intent(this@DoctorDescriptionActivity, MapActivity::class.java)
+            if (selectedDoctor != null) {
+                intent.putExtra("ADDRESS_EXTRA", selectedDoctor.address)
+                intent.putExtra("HOSPITAL_EXTRA", selectedDoctor.hospital)
+            }
+            startActivity(intent)
+        }
         if (selectedDoctor != null) {
             setupActionBar(selectedDoctor.name)
         }
@@ -78,7 +123,7 @@ class DoctorDescriptionActivity : BaseActivity() {
 
         if (selectedDoctor != null) {
             val dateFormatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-            val dayFormatter = SimpleDateFormat("dd EEE", Locale.getDefault())
+
 
             for (timing in selectedDoctor.timing) {
 
@@ -87,10 +132,10 @@ class DoctorDescriptionActivity : BaseActivity() {
                     try {
                         val date = dateFormatter.parse(dateStr)
                         if (date != null) {
-                            val formattedDate = dayFormatter.format(date)
-                            if (!uniqueDates.contains(formattedDate)) {
-                                uniqueDates.add(formattedDate)
-                            }
+
+
+                                uniqueDates.add(dateStr)
+
                         }
                     } catch (e: ParseException) {
                         // Handle parsing exceptions if any
@@ -248,7 +293,7 @@ class DoctorDescriptionActivity : BaseActivity() {
                             Toast.LENGTH_LONG
                         ).show()
                     } else {
-                        val randomId = Random.nextInt(200, 1001) // Generates a random integer between 200 and 1000
+                        val randomId = UniqueRandomIdGenerator().generateUniqueRandomId(1,100000)// Generates a random integer between 200 and 1000
                         appointment_by_user.id = randomId.toString()
                         appointment_by_user.user_id = FirestoreClass().getCurrentUserID()
                         appointment_by_user.date = dayselected
@@ -312,6 +357,48 @@ class DoctorDescriptionActivity : BaseActivity() {
                                     FirestoreClass().getCurrentUserID()
                                 )
                                 SendNotificationToUserAsyncTask(mdoctorDetails.name,muserDetails.fcmToken ).execute()
+//                                sendSms("+919784686709","Jai Shree Ram")
+                                val twilioApiService = createTwilioApiService()
+                                val toPhoneNumber = "+"+mdoctorDetails.mobile.toString()  // Replace with the recipient's phone number
+                                val fromPhoneNumber = "+12568418319" // Replace with your Twilio phone number
+                                val message = "Appointment with ${muserDetails.name} on ${dayselected} Time:${timeselected}"
+
+                                val twilioApiServiceuser = createTwilioApiService()
+                                val toPhoneNumberuser = "+"+muserDetails.mobile.toString()  // Replace with the recipient's phone number
+                                val fromPhoneNumberuser = "+12568418319" // Replace with your Twilio phone number
+                                val messageuser = "Appointment with ${mdoctorDetails.name} on ${dayselected} Time:${timeselected}"
+
+// You should run this in a background thread or coroutine to avoid blocking the UI thread.
+// For simplicity, we'll use a coroutine here.
+                                GlobalScope.launch(Dispatchers.IO) {
+                                    try {
+                                        val response = twilioApiService.sendSMS(ACCOUNT_SID, toPhoneNumber, fromPhoneNumber, message).execute()
+                                        if (response.isSuccessful) {
+
+                                        } else {
+                                            // SMS sending failed
+                                            // You can handle the failure case here
+                                        }
+                                    } catch (e: IOException) {
+                                        e.printStackTrace()
+                                        // Handle the exception here
+                                    }
+                                }
+                                GlobalScope.launch(Dispatchers.IO) {
+                                    try {
+                                        val response = twilioApiServiceuser.sendSMS(ACCOUNT_SID, toPhoneNumberuser, fromPhoneNumberuser, messageuser).execute()
+                                        if (response.isSuccessful) {
+
+                                        } else {
+                                            // SMS sending failed
+                                            // You can handle the failure case here
+                                        }
+                                    } catch (e: IOException) {
+                                        e.printStackTrace()
+                                        // Handle the exception here
+                                    }
+                                }
+
 
                                 startActivity(Intent(this@DoctorDescriptionActivity, MainActivity::class.java))
 
@@ -355,6 +442,41 @@ class DoctorDescriptionActivity : BaseActivity() {
 
         return datesList
     }
+
+    private fun sendSms(toPhoneNumber: String, message: String) {
+        GlobalScope.launch(Dispatchers.IO) {
+            val client = OkHttpClient()
+            val url = "https://api.twilio.com/2010-04-01/Accounts/$ACCOUNT_SID/SMS/Messages"
+            val base64EncodedCredentials = "Basic " + Base64.encodeToString(
+                "$ACCOUNT_SID:$AUTH_TOKEN".toByteArray(), Base64.NO_WRAP
+            )
+
+            val body = FormBody.Builder()
+                .add("From", TwilioConstants.FROM_PHONE_NUMBER)
+                .add("To", toPhoneNumber)
+                .add("Body", message)
+                .build()
+
+            val request = Request.Builder()
+                .url(url)
+                .post(body)
+                .header("Authorization", base64EncodedCredentials)
+                .build()
+
+            try {
+                val response = client.newCall(request).execute()
+                if (response.isSuccessful) {
+                    val responseBody = response.body()?.string()
+                    Log.d(TAG, "sendSms: $responseBody")
+                } else {
+                    Log.d(TAG, "sendSms: Request failed with code ${response.code()}")
+                }
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+        }
+    }
+
     @SuppressLint("StaticFieldLeak")
     private inner class SendNotificationToUserAsyncTask(val name: String, val token: String) :
         AsyncTask<Any, Void, String>() {

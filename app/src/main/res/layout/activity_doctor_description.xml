@@ -91,6 +91,16 @@
                 android:text="Address"
                 android:textSize="15dp" />
 
+            <Button
+                android:id="@+id/view_on_map"
+                android:layout_width="130dp"
+                android:layout_height="35dp"
+                android:layout_gravity="end"
+                android:layout_marginTop="4dp"
+                android:background="@drawable/default_option_border_changed"
+                android:text="View on Map"
+                android:textSize="12dp" />
+
 
         </LinearLayout>
 

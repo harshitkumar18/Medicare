@@ -59,6 +59,27 @@
                 android:textColor="@color/secondary_text_color"
                 android:textSize="@dimen/item_board_created_by_text_size"
                 tools:text="Created By" />
+            <Button
+                android:id="@+id/cancel_appointment"
+                android:layout_width="100dp"
+            android:layout_height="38dp"
+            android:layout_gravity="end"
+            android:background="@drawable/default_option_border_changed"
+            android:text="Cancel"
+            android:textColor="@color/black"
+            android:drawableRight="@drawable/baseline_free_cancellation_24"
+            android:drawablePadding="4dp"
+            android:paddingStart="4dp"
+                android:visibility="invisible"
+            android:paddingEnd="8dp"
+            />
+
+
+
+
+
+
+
 
 
 

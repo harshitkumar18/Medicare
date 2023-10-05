@@ -1,5 +1,8 @@
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
+import android.icu.text.SimpleDateFormat
+import android.net.ParseException
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,6 +11,7 @@ import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.medicare.R
 import com.example.medicare.models.Timing
+import java.util.Locale
 
 class TimingAdapter(private val data: List<String>, private val context: Context) :
     RecyclerView.Adapter<TimingAdapter.ViewHolder>() {
@@ -35,9 +39,16 @@ class TimingAdapter(private val data: List<String>, private val context: Context
         return ViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, @SuppressLint("RecyclerView") position: Int) {
         val item = data[position]
-        holder.textView.text = item
+        holder.textView.text = formatDate(item)
+
+        // Set the background color based on the selection status
+        if (position == selectedPosition) {
+            holder.cardView.setCardBackgroundColor(Color.parseColor("#69BCE9")) // Selected color
+        } else {
+            holder.cardView.setCardBackgroundColor(Color.parseColor("#FFFFFF")) // Default color
+        }
 
         holder.cardView.setOnClickListener {
             val previousSelectedPosition = selectedPosition
@@ -53,15 +64,25 @@ class TimingAdapter(private val data: List<String>, private val context: Context
 
             listener?.onClick(position)
         }
+    }
 
-// Set the background color based on the selection status
-        if (position == selectedPosition) {
-            holder.cardView.setCardBackgroundColor(Color.parseColor("#69Bce9")) // Selected color
-        } else {
-            holder.cardView.setCardBackgroundColor(Color.parseColor("#FFFFFF")) // Default color
+    private fun formatDate(dateStr: String): String {
+        val inputFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        val outputFormat = SimpleDateFormat("dd EEE", Locale.getDefault())
+
+        try {
+            val date = inputFormat.parse(dateStr)
+            if (date != null) {
+                return outputFormat.format(date)
+            }
+        } catch (e: ParseException) {
+            // Handle parsing exceptions if any
+            e.printStackTrace()
         }
 
+        return dateStr // Return the original date string in case of an error
     }
+
 
     override fun getItemCount(): Int {
         return data.size

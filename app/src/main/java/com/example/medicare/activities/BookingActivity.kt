@@ -123,6 +123,7 @@ class BookingActivity : AppCompatActivity() {
         }
     }
     fun populateDoctorsListToUI(user:User) {
+        hideProgressDialog()
         var userbookings: ArrayList<AppointmentUser> = ArrayList()
         userbookings = user.userappointment
         userbookings.sortWith(customComparator)
@@ -137,15 +138,19 @@ class BookingActivity : AppCompatActivity() {
         val adapter = BookingListAdapter(this@BookingActivity, userbookings)
         rv_speciality_list.adapter = adapter // Attach the adapter to the recyclerView.
 
-        adapter.setOnClickListener(object : BookingListAdapter.OnClickListener {
-            override fun onClick(position: Int, model: AppointmentUser) {
-                val intent = Intent(this@BookingActivity,DoctorDescriptionActivity::class.java)
-                val selectedModel = userbookings[position] // Use a different variable name
+//        adapter.setOnClickListener(object : BookingListAdapter.OnClickListener {
+//            override fun onClick(position: Int, model: AppointmentUser) {
+//                val intent = Intent(this@BookingActivity, DoctorDescriptionActivity::class.java)
+//                val selectedUser = userbookings[position] // Use a different variable name
+//                intent.putExtra(Constants.DOCTOR_MODEL, selectedUser)
+//                startActivity(intent)
+//            }
+//        })
 
-                intent.putExtra(Constants.DOCTOR_MODEL, selectedModel)
-                startActivity(intent)
-            }
-        })
+    }
+    fun updatelist(){
+        showProgressDialog("Please Wait")
+        FirestoreClass().getuserDetailsinbooking(this, FirestoreClass().getCurrentUserID())
     }
 
 }
