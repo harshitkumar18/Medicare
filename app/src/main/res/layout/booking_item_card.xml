@@ -59,20 +59,8 @@
                 android:textColor="@color/secondary_text_color"
                 android:textSize="@dimen/item_board_created_by_text_size"
                 tools:text="Created By" />
-            <Button
-                android:id="@+id/cancel_appointment"
-                android:layout_width="100dp"
-            android:layout_height="38dp"
-            android:layout_gravity="end"
-            android:background="@drawable/default_option_border_changed"
-            android:text="Cancel"
-            android:textColor="@color/black"
-            android:drawableRight="@drawable/baseline_free_cancellation_24"
-            android:drawablePadding="4dp"
-            android:paddingStart="4dp"
-                android:visibility="invisible"
-            android:paddingEnd="8dp"
-            />
+
+
 
 
 
@@ -85,7 +73,47 @@
 
         </LinearLayout>
 
+
     </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:gravity="center_horizontal"
+        android:padding="5dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/buttonReschedule"
+            android:layout_width="0dp"
+            android:layout_height="38dp"
+            android:layout_weight="1"
+            android:text="Reschedule"
+            android:textColor="@color/black"
+            android:background="@drawable/default_option_border_changed"
+
+            android:visibility="gone"
+            android:layout_marginStart="4dp"
+            android:drawablePadding="2dp" />
+
+
+        <Button
+            android:id="@+id/cancel_appointment"
+            android:layout_width="0dp"
+            android:backgroundTint="#ED6C6C"
+            android:layout_marginStart="2dp"
+            android:layout_height="38dp"
+            android:layout_weight="1"
+            android:background="@drawable/default_option_border_changed"
+            android:text="Cancel"
+            android:textColor="@color/black"
+
+            android:visibility="invisible"
+            android:drawablePadding="4dp"
+            android:layout_marginEnd="4dp" />
+
+    </LinearLayout>
+
 
     <View
         android:layout_width="match_parent"

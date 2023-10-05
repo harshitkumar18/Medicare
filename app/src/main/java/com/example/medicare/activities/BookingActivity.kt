@@ -97,7 +97,7 @@ class BookingActivity : AppCompatActivity() {
     val customComparator = Comparator<AppointmentUser> { appointment1, appointment2 ->
         try {
             // Define date and time formats
-            val dateFormat = SimpleDateFormat("dd EEE", Locale.getDefault())
+            val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
             val timeFormat = SimpleDateFormat("hh:mm a", Locale.getDefault())
 
             // Parse the date and time strings from the AppointmentUser objects
@@ -105,15 +105,15 @@ class BookingActivity : AppCompatActivity() {
             val date2 = dateFormat.parse(appointment2.date)
 
             // Compare the parsed dates
-            val dateComparison = date1.compareTo(date2)
+            val dateComparison = date2.compareTo(date1) // Reverse order for latest date first
 
             if (dateComparison == 0) {
                 // Dates are the same, so compare times
                 val time1 = timeFormat.parse(appointment1.time)
                 val time2 = timeFormat.parse(appointment2.time)
 
-                // Compare the parsed times
-                time1.compareTo(time2)
+                // Compare the parsed times in reverse order for latest time first
+                time2.compareTo(time1)
             } else {
                 dateComparison // Return the result of date comparison
             }
@@ -122,6 +122,10 @@ class BookingActivity : AppCompatActivity() {
             0 // Default to no change in order
         }
     }
+
+// Sort the appointmentList using the customComparator
+
+
     fun populateDoctorsListToUI(user:User) {
         hideProgressDialog()
         var userbookings: ArrayList<AppointmentUser> = ArrayList()
