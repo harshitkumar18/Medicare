@@ -76,13 +76,9 @@ class MapActivity : AppCompatActivity() {
 
     private fun loadWebViewWithSearchQuery(hospital: String?, address: String?) {
         if (!hospital.isNullOrEmpty() && !address.isNullOrEmpty()) {
-            // Encode the hospital and address for the URL
-            val encodedHospital = Uri.encode(hospital)
-            val encodedAddress = Uri.encode(address)
-
             // Construct the Google Maps URL with a search query
-            val query = "$encodedHospital $encodedAddress"
-            val mapsUrl = "https://www.google.com/maps?q=$query&output=embed"
+            val query = "$hospital $address"
+            val mapsUrl = "https://www.google.com/maps?q=$query"
             webView.loadUrl(mapsUrl)
         }
     }

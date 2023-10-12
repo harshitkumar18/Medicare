@@ -212,13 +212,13 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
         // Get the current logged in user details.
         // Show the progress dialog.
-        showProgressDialog(resources.getString(R.string.please_wait))
+//        showProgressDialog(resources.getString(R.string.please_wait))
         FirestoreClass().loadUserData(this@MainActivity, true)
     }
     private fun updateFCMToken(token: String){
         val userHashMap = HashMap<String,Any>()
         userHashMap[Constants.FCM_TOKEN] = token
-        showProgressDialog(resources.getString(R.string.please_wait))
+//        showProgressDialog(resources.getString(R.string.please_wait))
         FirestoreClass().updateUserProfileData(this,userHashMap)
     }
     private fun newsuiset(){
@@ -228,7 +228,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         val layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         recyclerView.layoutManager = layoutManager
 
-// Create an instance of your NewsListAdapter
+
         mAdapter = NewsListAdapter(this)
 
 // Set the adapter for the RecyclerView
@@ -239,22 +239,19 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         fetchData()
 
     }
-    private fun fetchData(){
+    private fun fetchData() {
         hideProgressDialog()
         val queue = Volley.newRequestQueue(this)
-        val url =
-            "\n" +
-                    "\n" +
-                    "https://newsapi.org/v2/top-headlines?country=in&category=health&apiKey=6234c5797107411c9908d3fd4722d14d"
+        val url = "https://newsapi.org/v2/top-headlines?country=in&category=health&apiKey=6234c5797107411c9908d3fd4722d14d"
         val getRequest: JsonObjectRequest = object : JsonObjectRequest(
             Request.Method.GET,
             url,
             null,
             Response.Listener {
-                Log.e("sdsadas","$it")
+                Log.e("sdsadas", "$it")
                 val newsJsonArray = it.getJSONArray("articles")
                 val newsArray = ArrayList<News>()
-                for(i in 0 until  newsJsonArray.length()){
+                for (i in 0 until newsJsonArray.length()) {
                     val newsJsonObject = newsJsonArray.getJSONObject(i)
                     val news = News(
                         newsJsonObject.getString("author"),
@@ -266,6 +263,9 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                     newsArray.add(news)
                 }
                 mAdapter.updateNews(newsArray)
+
+                // Hide the progress dialog here, as data fetching is complete.
+                hideProgressDialog()
             },
             Response.ErrorListener { error ->
 
@@ -280,6 +280,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         }
         queue.add(getRequest)
     }
+
 
 
 

@@ -12,10 +12,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.medicare.R
 import com.example.medicare.models.SlotAvailability
 import com.example.medicare.models.Timing
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 class TimingAdapterLatest(
     private val selectedDatePosition: Int,
-    private val data: List<SlotAvailability>,
+    private val data: List<SlotAvailability>,private val dateslot: List<Timing>,
     private val context: Context
 ) :
     RecyclerView.Adapter<TimingAdapterLatest.ViewHolder>() {
@@ -46,7 +49,7 @@ class TimingAdapterLatest(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = data[position]
         holder.textView.text = item.date
-
+        val dateselected = dateslot[selectedDatePosition].time
         if (item.remainingSlots.toInt() == 0) {
             // No slots available
             holder.slots.text = "No slots available"

@@ -153,11 +153,7 @@ class BookingListAdapter(
                                         }
                                     }
                                     val mPositionTime = timeList.indexOf(model.time)
-                                    Toast.makeText(
-                                        context,
-                                        "$mPositionTime $mPositionDate",
-                                        Toast.LENGTH_LONG
-                                    ).show()
+//
 
                                     // Update the doctor's appointment list
                                     val appointmentList = doctorDetails.appointment.toMutableList()

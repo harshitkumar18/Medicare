@@ -193,7 +193,7 @@ class DoctorDescriptionActivity : BaseActivity() {
 
                         // Define a custom comparator to sort based on the time field
 
-                        timinguiset(workingtime)
+                        timinguiset(workingtime,selectedDoctor.timing)
                     }
                 } else {
                     // When the same date is selected again (deselected), hide the timing RecyclerView and "Working Hours" TextView
@@ -233,7 +233,7 @@ class DoctorDescriptionActivity : BaseActivity() {
             .into(nav_user_image)
     }
 
-    fun timinguiset(timinglist: ArrayList<SlotAvailability>) {
+    fun timinguiset(timinglist: ArrayList<SlotAvailability>,slotlist: ArrayList<Timing>) {
         val rv_timing_list = findViewById<RecyclerView>(R.id.timingrecyclerview)
 
         val layoutManager =
@@ -242,7 +242,7 @@ class DoctorDescriptionActivity : BaseActivity() {
         rv_timing_list.setHasFixedSize(true)
 
         // Pass the selected date position to TimingAdapterLatest
-        val adapter = TimingAdapterLatest(mpositiondate, timinglist, this@DoctorDescriptionActivity)
+        val adapter = TimingAdapterLatest(mpositiondate, timinglist,  slotlist,this@DoctorDescriptionActivity)
         rv_timing_list.adapter = adapter
 
         adapter.setOnClickListener(object :
