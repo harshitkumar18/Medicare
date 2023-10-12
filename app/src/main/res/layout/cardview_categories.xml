@@ -16,6 +16,7 @@
     <TextView
         android:id="@+id/smallCardTextView"
         android:layout_width="400dp"
+android:background="@drawable/gradient"
         android:layout_height="80dp"
         android:text="Card Content"
         android:layout_gravity="center"
