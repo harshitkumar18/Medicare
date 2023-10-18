@@ -48,7 +48,10 @@ object Constants {
     const val WEIGHT: String = "weight"
     const val Diabities: String = "diabetic"
     const val AGE: String = "age"
-
+    const val SEND_ID = "SEND_ID"
+    const val RECEIVE_ID = "RECEIVE_ID"
+    const val OPEN_GOOGLE = "Opening Google..."
+    const val OPEN_SEARCH = "Searching..."
     const val TASK_LIST_ITEM_POSITION: String = "task_list_item_position"
     const val CARD_LIST_ITEM_POSITION: String = "card_list_item_position"
 

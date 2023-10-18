@@ -20,6 +20,7 @@ import com.example.medicare.models.AppointmentUser
 import com.example.medicare.models.Doctor
 import com.example.medicare.models.User
 import com.example.medicare.utils.Constants
+import com.google.firebase.firestore.FirebaseFirestore
 import org.json.JSONObject
 import java.io.BufferedReader
 import java.io.DataOutputStream
@@ -142,14 +143,21 @@ class BookingActivity : AppCompatActivity() {
         val adapter = BookingListAdapter(this@BookingActivity, userbookings)
         rv_speciality_list.adapter = adapter // Attach the adapter to the recyclerView.
 
-//        adapter.setOnClickListener(object : BookingListAdapter.OnClickListener {
-//            override fun onClick(position: Int, model: AppointmentUser) {
-//                val intent = Intent(this@BookingActivity, DoctorDescriptionActivity::class.java)
-//                val selectedUser = userbookings[position] // Use a different variable name
-//                intent.putExtra(Constants.DOCTOR_MODEL, selectedUser)
-//                startActivity(intent)
-//            }
-//        })
+        adapter.setOnClickListener(object : BookingListAdapter.OnClickListener {
+            override fun onClick(position: Int, model: AppointmentUser) {
+                val intent = Intent(this@BookingActivity, DoctorDescriptionActivity::class.java)
+                val doctorid= userbookings[position].doctor_id // Use a different variable name
+                var mdoctorDetails: Doctor? = null
+                FirebaseFirestore.getInstance().collection(Constants.DOCTOR)
+                    .document(doctorid)
+                    .get()
+                    .addOnSuccessListener { document ->
+                        mdoctorDetails = document.toObject(Doctor::class.java)!!
+                        intent.putExtra(Constants.DOCTOR_MODEL, mdoctorDetails)
+                        startActivity(intent)
+                    }
+            }
+        })
 
     }
     fun updatelist(){

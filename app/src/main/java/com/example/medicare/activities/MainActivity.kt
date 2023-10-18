@@ -93,7 +93,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                     true
                 }
                 R.id.webview_chatbot -> {
-                    startActivityForResult(Intent(this, ChatBot::class.java), MY_PROFILE_REQUEST_CODE)
+                    startActivityForResult(Intent(this, MediChatbot::class.java), MY_PROFILE_REQUEST_CODE)
                     true
                 }
                 else -> false

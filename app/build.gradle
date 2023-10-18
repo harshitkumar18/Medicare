@@ -75,7 +75,7 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview-selection:1.1.0'
     implementation 'com.github.hihi-dev:twiliosms:0.1.1'
     implementation 'com.squareup.retrofit2:retrofit:2.1.0'
-    implementation("com.squareup.okhttp3:okhttp:3.4.1")
+    implementation("com.squareup.okhttp3:okhttp:4.9.1")
     implementation 'org.apache.httpcomponents:httpclient:4.5.13'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
 

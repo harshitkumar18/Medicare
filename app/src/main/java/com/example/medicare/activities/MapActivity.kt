@@ -147,6 +147,9 @@ class MapActivity : AppCompatActivity() {
         mProgressDialog.dismiss()
     }
 
+
+
+
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 123
         private const val LOCATION_SETTINGS_REQUEST_CODE = 124

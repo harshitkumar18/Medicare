@@ -1,17 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal"
-    tools:context=".activities.BMIActivity">
+    android:fillViewport="true">
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        tools:context=".activities.BMIActivity">
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar_bmi_activity"
         android:layout_width="wrap_content"
         android:layout_height="?android:attr/actionBarSize"
         android:background="@color/white"/>
+
 
     <RadioGroup
         android:id="@+id/rgUnits"
@@ -176,8 +182,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:orientation="vertical"
-        android:visibility="invisible"
-        tools:visibility="visible">
+        android:visibility="gone"
+        tools:visibility="gone">
         <TextView
             android:id="@+id/tvYourBMI"
             android:layout_width="match_parent"
@@ -212,22 +218,75 @@
             android:text="Normal"
             android:textSize="16sp"/>
     </LinearLayout>
+    <ScrollView
+        android:id="@+id/scrollview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/llDisplayBMIResult">
 
+
+    <LinearLayout
+        android:id="@+id/lltips"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="10dp"
+        android:visibility="gone"
+        tools:visibility="gone">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Health Tips"
+            android:textSize="18dp"
+            android:textColor="@color/black"/>
+        <TextView
+            android:id="@+id/malestextview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="For Male"
+            android:layout_marginTop="12dp"
+            android:textColor="@color/black"/>
+        <TextView
+            android:id="@+id/malestipspoints"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1."
+            android:layout_marginTop="5dp"
+            android:textColor="@color/black"/>
+
+        <TextView
+            android:id="@+id/femaletextview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="For Female"
+            android:layout_marginTop="12dp"
+            android:textColor="@color/black"/>
+        <TextView
+            android:id="@+id/femalestipspoints"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1."
+            android:layout_marginTop="5dp"
+            android:textColor="@color/black"/>
+
+
+    </LinearLayout>
+    </ScrollView>
     <Button
-        android:layout_below="@id/llDisplayBMIResult"
         android:id="@+id/btncalculator"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:layout_marginTop="35dp"
-        android:backgroundTint="@color/colorAccent"
-        android:text="CALCULATE"
+        android:layout_below="@id/scrollview"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
+        android:backgroundTint="@color/colorAccent"
+        android:text="CALCULATE"
         android:textColor="#FFFFFF"
         android:textSize="18sp"/>
 
 
 
 
-</RelativeLayout>
+    </RelativeLayout>
+</ScrollView>

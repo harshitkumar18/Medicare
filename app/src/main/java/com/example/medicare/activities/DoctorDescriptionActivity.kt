@@ -93,9 +93,9 @@ class DoctorDescriptionActivity : BaseActivity() {
     var mdoctorDetails: Doctor = Doctor()
     var datelistnew: ArrayList<String> = ArrayList()
     object TwilioConstants {
-        const val ACCOUNT_SID = "AC0dc5ab3e773a73754e063e0da86cba1b"
-        const val AUTH_TOKEN = "242aecf13b1652243624a92ee5b7b2fb"
-        const val FROM_PHONE_NUMBER = "+12568418319"
+        const val ACCOUNT_SID = "ACade57ae65880ce3b2511b46976c6e3f0"
+        const val AUTH_TOKEN = "1bbf43a7e99968e916acf6e669024360"
+        const val FROM_PHONE_NUMBER = "+14043345873"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -112,6 +112,7 @@ class DoctorDescriptionActivity : BaseActivity() {
             }
             startActivity(intent)
         }
+        FirestoreClass().getuserDetails(this,FirestoreClass().getCurrentUserID())
         if (selectedDoctor != null) {
             setupActionBar(selectedDoctor.name)
         }
@@ -260,39 +261,82 @@ class DoctorDescriptionActivity : BaseActivity() {
             .get()
             .addOnSuccessListener { document ->
                 mdoctorDetails = document.toObject(Doctor::class.java)!!
-
+                val currentTimeMillis = System.currentTimeMillis()
+                val twentyFourHoursInMillis = 24 * 60 * 60 * 1000 // 24 hours in milliseconds
+                val isWithin24Hours = mdoctorDetails.appointment.any { appointment ->
+                    appointment.date == dayselected &&
+                            appointment.time == timeselected &&
+                            appointment.user_id == FirestoreClass().getCurrentUserID() &&
+                            (currentTimeMillis - appointment.timestamp) < twentyFourHoursInMillis
+                }
                 // Continue with the booking logic inside this block
                 if (timeselected.isNotEmpty() && dayselected.isNotEmpty()) {
                     // Check if the selected date and time are already booked
-                    val isAlreadyBooked = mdoctorDetails.appointment.any { appointment ->
-                        appointment.date == dayselected && appointment.time == timeselected
+                    val isAlreadyBookedWithOtherDoctor = muserDetails.userappointment.any { doctorAppointment ->
+                            doctorAppointment.date == dayselected && doctorAppointment.time == timeselected && doctorAppointment.doctor_id != mdoctorDetails.documentId
                     }
+                    val hasConflict =  mdoctorDetails.appointment.any { doctorAppointment ->
+                        doctorAppointment.date == dayselected && doctorAppointment.time == timeselected && doctorAppointment.user_id == FirestoreClass().getCurrentUserID()
+                    }
+                    // Check if the user has already booked an appointment with this doctor
+                    val isAlreadyBookedWithSameDoctor = mdoctorDetails.appointment.any { appointment ->
+                        appointment.date == dayselected && appointment.time == timeselected && appointment.user_id == FirestoreClass().getCurrentUserID()
+                    }
+                    var isuseralreadybookedwithotherdoctor: Boolean? = null
+                    var mdoctoralreadybooked: Doctor? = null
+
+                    val doctorId = muserDetails.userappointment.find {
+                        it.date == dayselected && it.time == timeselected
+                    }?.doctor_id
+                    Log.e("doctorid", "Doctor ID: $doctorId")
+
+                    if (doctorId != null) {
+                        FirebaseFirestore.getInstance().collection(Constants.DOCTOR)
+                            .document(doctorId)
+                            .get()
+                            .addOnSuccessListener { document ->
+                                mdoctoralreadybooked = document.toObject(Doctor::class.java)
+
+                                // Handle any further logic related to mdoctoralreadybooked here
+                            }
+                    }
+
+                    Log.e("doctorid2", "Doctor ID: ${mdoctoralreadybooked?.name}")
+
 
                     // Check if the user has already booked an appointment within the last 24 hours for the same date and time
-                    val currentTimeMillis = System.currentTimeMillis()
-                    val twentyFourHoursInMillis = 24 * 60 * 60 * 1000 // 24 hours in milliseconds
-                    val isWithin24Hours = mdoctorDetails.appointment.any { appointment ->
-                        appointment.date == dayselected &&
-                                appointment.time == timeselected &&
-                                appointment.user_id == FirestoreClass().getCurrentUserID() &&
-                                (currentTimeMillis - appointment.timestamp) < twentyFourHoursInMillis
-                    }
 
-                    if (isAlreadyBooked) {
-                        // Display a toast message indicating that the slot is already booked
-                        Toast.makeText(
-                            this,
-                            "Slot already booked on $dayselected at $timeselected",
-                            Toast.LENGTH_LONG
-                        ).show()
-                    } else if (isWithin24Hours) {
+                     if (hasConflict == true) {
                         // Display a toast message indicating that the user has already booked an appointment within 24 hours
                         Toast.makeText(
                             this,
-                            "You can't book another appointment within 24 hours for the same slot",
+//                            "You can't book another appointment within 24 hours for the same slot",
+                            "Slot already booked on $dayselected at $timeselected ",
+
                             Toast.LENGTH_LONG
                         ).show()
-                    } else {
+                    }
+                    else if (isAlreadyBookedWithOtherDoctor) {
+                        // Display a toast message indicating that the slot is already booked
+
+
+                        Toast.makeText(
+                            this,
+                            "Slot already booked on $dayselected at $timeselected with other doctor. Please Check Your Appointments Once",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+//                    else if (isAlreadyBookedWithOtherDoctor == true) {
+//                        // Display a toast message indicating that the user has already booked an appointment within 24 hours
+//                        Toast.makeText(
+//                            this,
+////                            "You can't book another appointment within 24 hours for the same slot",
+//                            "Slot already booked on $dayselected at $timeselected",
+//
+//                            Toast.LENGTH_LONG
+//                        ).show()
+//                    }
+                    else {
                         val randomId = UniqueRandomIdGenerator().generateUniqueRandomId(1,100000)// Generates a random integer between 200 and 1000
                         appointment_by_user.id = randomId.toString()
                         appointment_by_user.user_id = FirestoreClass().getCurrentUserID()
@@ -357,15 +401,15 @@ class DoctorDescriptionActivity : BaseActivity() {
                                     FirestoreClass().getCurrentUserID()
                                 )
                                 SendNotificationToUserAsyncTask(mdoctorDetails.name,muserDetails.fcmToken ).execute()
-//                                sendSms("+919784686709","Jai Shree Ram")
+//
                                 val twilioApiService = createTwilioApiService()
                                 val toPhoneNumber = "+"+mdoctorDetails.mobile.toString()  // Replace with the recipient's phone number
-                                val fromPhoneNumber = "+12568418319" // Replace with your Twilio phone number
+                                val fromPhoneNumber = "+14043345873" // Replace with your Twilio phone number
                                 val message = "Appointment with ${muserDetails.name} on ${dayselected} Time:${timeselected}"
 
                                 val twilioApiServiceuser = createTwilioApiService()
                                 val toPhoneNumberuser = "+"+muserDetails.mobile.toString()  // Replace with the recipient's phone number
-                                val fromPhoneNumberuser = "+12568418319" // Replace with your Twilio phone number
+                                val fromPhoneNumberuser = "+14043345873" // Replace with your Twilio phone number
                                 val messageuser = "Appointment with ${mdoctorDetails.name} on ${dayselected} Time:${timeselected}"
 
 // You should run this in a background thread or coroutine to avoid blocking the UI thread.
@@ -384,6 +428,7 @@ class DoctorDescriptionActivity : BaseActivity() {
                                         // Handle the exception here
                                     }
                                 }
+
                                 GlobalScope.launch(Dispatchers.IO) {
                                     try {
                                         val response = twilioApiServiceuser.sendSMS(ACCOUNT_SID, toPhoneNumberuser, fromPhoneNumberuser, messageuser).execute()
@@ -443,39 +488,7 @@ class DoctorDescriptionActivity : BaseActivity() {
         return datesList
     }
 
-    private fun sendSms(toPhoneNumber: String, message: String) {
-        GlobalScope.launch(Dispatchers.IO) {
-            val client = OkHttpClient()
-            val url = "https://api.twilio.com/2010-04-01/Accounts/$ACCOUNT_SID/SMS/Messages"
-            val base64EncodedCredentials = "Basic " + Base64.encodeToString(
-                "$ACCOUNT_SID:$AUTH_TOKEN".toByteArray(), Base64.NO_WRAP
-            )
 
-            val body = FormBody.Builder()
-                .add("From", TwilioConstants.FROM_PHONE_NUMBER)
-                .add("To", toPhoneNumber)
-                .add("Body", message)
-                .build()
-
-            val request = Request.Builder()
-                .url(url)
-                .post(body)
-                .header("Authorization", base64EncodedCredentials)
-                .build()
-
-            try {
-                val response = client.newCall(request).execute()
-                if (response.isSuccessful) {
-                    val responseBody = response.body()?.string()
-                    Log.d(TAG, "sendSms: $responseBody")
-                } else {
-                    Log.d(TAG, "sendSms: Request failed with code ${response.code()}")
-                }
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
-        }
-    }
 
     @SuppressLint("StaticFieldLeak")
     private inner class SendNotificationToUserAsyncTask(val name: String, val token: String) :
