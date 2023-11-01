@@ -1,4 +1,3 @@
-import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
 import android.icu.text.SimpleDateFormat
@@ -10,10 +9,11 @@ import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.medicare.R
-import com.example.medicare.models.Timing
+import java.time.LocalDate
+import java.util.ArrayList
 import java.util.Locale
 
-class TimingAdapter(private val data: List<String>, private val context: Context) :
+class TimingAdapter(private val data: ArrayList<Pair<Int, String>>, private val context: Context) :
     RecyclerView.Adapter<TimingAdapter.ViewHolder>() {
 
     interface OnClickListener {
@@ -39,8 +39,9 @@ class TimingAdapter(private val data: List<String>, private val context: Context
         return ViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, @SuppressLint("RecyclerView") position: Int) {
-        val item = data[position]
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val item = data[position].second
+
         holder.textView.text = formatDate(item)
 
         // Set the background color based on the selection status
@@ -65,6 +66,7 @@ class TimingAdapter(private val data: List<String>, private val context: Context
             listener?.onClick(position)
         }
     }
+
 
     private fun formatDate(dateStr: String): String {
         val inputFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())

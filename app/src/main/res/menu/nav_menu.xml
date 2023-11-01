@@ -12,9 +12,9 @@
         android:id="@+id/webview_chatbot"
         android:icon="@drawable/ic_message_24"
         android:title="Chatbot" />
-    <item
-        android:id="@+id/settings"
-        android:icon="@drawable/ic_user_place_holder"
-        android:title="Profile" />
+<!--    <item-->
+<!--        android:id="@+id/settings"-->
+<!--        android:icon="@drawable/ic_user_place_holder"-->
+<!--        android:title="Profile" />-->
 
 </menu>

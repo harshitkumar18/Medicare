@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
+import android.view.View
 import android.widget.TextView
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.view.GravityCompat
@@ -88,10 +89,10 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                     startActivityForResult(Intent(this, BookingActivity::class.java), MY_PROFILE_REQUEST_CODE)
                     true
                 }
-                R.id.settings -> {
-                    startActivityForResult(Intent(this, SettingActivity::class.java), MY_PROFILE_REQUEST_CODE)
-                    true
-                }
+//                R.id.settings -> {
+//                    startActivityForResult(Intent(this, SettingActivity::class.java), MY_PROFILE_REQUEST_CODE)
+//                    true
+//                }
                 R.id.webview_chatbot -> {
                     startActivityForResult(Intent(this, MediChatbot::class.java), MY_PROFILE_REQUEST_CODE)
                     true
@@ -102,6 +103,9 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
         setupActionBar()
         categoriesSet()
+        findViewById<CircleImageView>(R.id.profileImage).setOnClickListener {
+            startActivityForResult(Intent(this, SettingActivity::class.java), MY_PROFILE_REQUEST_CODE)
+        }
     }
 
     private fun categoriesSet() {
@@ -152,6 +156,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             .centerCrop()
             .placeholder(R.drawable.ic_user_place_holder)
             .into(navUserImage)
+
 
         val tvUserName = findViewById<TextView>(R.id.signedinuseret)
         val userName = user.name
@@ -263,7 +268,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                     newsArray.add(news)
                 }
                 mAdapter.updateNews(newsArray)
-
+                findViewById<RecyclerView>(R.id.newsRecyclerView1).visibility = View.VISIBLE
+                findViewById<TextView>(R.id.no_news).visibility = View.GONE
                 // Hide the progress dialog here, as data fetching is complete.
                 hideProgressDialog()
             },

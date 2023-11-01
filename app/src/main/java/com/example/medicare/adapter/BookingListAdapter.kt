@@ -255,7 +255,7 @@ class BookingListAdapter(
                                                                     val twilioApiService =
                                                                         createTwilioApiService()
                                                                     val toPhoneNumber =
-                                                                        "+" + userDetails.mobile.toString()  // Replace with the recipient's phone number
+                                                                        "+91" + userDetails.mobile.toString()  // Replace with the recipient's phone number
                                                                     val fromPhoneNumber =
                                                                         "+14043345873" // Replace with your Twilio phone number
                                                                     val message =
@@ -286,7 +286,7 @@ class BookingListAdapter(
                                                                     val twilioApiServicedoctor =
                                                                         createTwilioApiService()
                                                                     val toPhoneNumberdoctor =
-                                                                        "+" + doctorDetails.mobile.toString()  // Replace with the recipient's phone number
+                                                                        "+91" + doctorDetails.mobile.toString()  // Replace with the recipient's phone number
                                                                     val fromPhoneNumberdoctor =
                                                                         "+14043345873" // Replace with your Twilio phone number
                                                                     val messagedoctor =
@@ -513,11 +513,11 @@ class BookingListAdapter(
                                                                     val twilioApiService =
                                                                         createTwilioApiService()
                                                                     val toPhoneNumber =
-                                                                        "+" + userDetails.mobile.toString()  // Replace with the recipient's phone number
+                                                                        "+91" + userDetails.mobile.toString()  // Replace with the recipient's phone number
                                                                     val fromPhoneNumber =
                                                                         "+14043345873" // Replace with your Twilio phone number
                                                                     val message =
-                                                                        "Appointment with ${doctorDetails.name}, Booking Id: ${bookingIdToDelete} is Cancelled"
+                                                                        "Appointment with ${doctorDetails.name}, Booking Id: ${bookingIdToDelete} is Cancelled. you can reschedule your appointment now"
 
 // You should run this in a background thread or coroutine to avoid blocking the UI thread.
 // For simplicity, we'll use a coroutine here.
@@ -544,7 +544,7 @@ class BookingListAdapter(
                                                                     val twilioApiServicedoctor =
                                                                         createTwilioApiService()
                                                                     val toPhoneNumberdoctor =
-                                                                        "+" + doctorDetails.mobile.toString()  // Replace with the recipient's phone number
+                                                                        "+91" + doctorDetails.mobile.toString()  // Replace with the recipient's phone number
                                                                     val fromPhoneNumberdoctor =
                                                                         "+14043345873" // Replace with your Twilio phone number
                                                                     val messagedoctor =

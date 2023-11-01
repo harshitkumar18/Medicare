@@ -4,15 +4,14 @@ package com.example.medicare.activities
 
 import TimingAdapter
 import android.annotation.SuppressLint
-import android.content.ContentValues.TAG
+import kotlin.Pair
+
 import android.content.Intent
+import android.net.Uri
 import android.os.AsyncTask
 import android.os.Bundle
-import android.os.StrictMode
 
 import kotlinx.coroutines.launch
-import android.telecom.Call
-import android.util.Base64
 import android.util.Log
 import android.view.View
 import android.widget.Button
@@ -20,12 +19,10 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.android.volley.Response
 import com.bumptech.glide.Glide
 import com.example.medicare.Firebase.FirestoreClass
 import com.example.medicare.R
 import com.example.medicare.activities.DoctorDescriptionActivity.TwilioConstants.ACCOUNT_SID
-import com.example.medicare.activities.DoctorDescriptionActivity.TwilioConstants.AUTH_TOKEN
 import com.example.medicare.adapter.TimingAdapterLatest
 import com.example.medicare.models.Appointment
 import com.example.medicare.models.AppointmentUser
@@ -36,24 +33,12 @@ import com.example.medicare.models.User
 import com.example.medicare.utils.Constants
 import com.google.firebase.firestore.FirebaseFirestore
 import de.hdodenhof.circleimageview.CircleImageView
-import okhttp3.FormBody
-import okhttp3.OkHttpClient
-import okhttp3.Request
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import okhttp3.*
 
-import okhttp3.ResponseBody
 import org.json.JSONObject
-import retrofit2.Callback
 
-import retrofit2.Retrofit
-import retrofit2.http.FieldMap
-import retrofit2.http.FormUrlEncoded
-import retrofit2.http.Header
-import retrofit2.http.POST
-import retrofit2.http.Path
 import java.io.BufferedReader
 import java.io.DataOutputStream
 import java.io.IOException
@@ -65,18 +50,9 @@ import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
-import kotlin.random.Random
-import org.apache.http.HttpEntity
-import org.apache.http.HttpResponse
-import org.apache.http.NameValuePair
-import org.apache.http.client.ClientProtocolException
-import org.apache.http.client.entity.UrlEncodedFormEntity
-import org.apache.http.client.methods.HttpPost
-import org.apache.http.impl.client.DefaultHttpClient
-import org.apache.http.message.BasicNameValuePair
-import org.apache.http.util.EntityUtils
 
 import java.util.ArrayList
+import java.util.Date
 import kotlin.collections.List
 
 class DoctorDescriptionActivity : BaseActivity() {
@@ -119,32 +95,38 @@ class DoctorDescriptionActivity : BaseActivity() {
         if (selectedDoctor != null) {
             setupui(selectedDoctor)
         }
+        findViewById<Button>(R.id.call).setOnClickListener {
+            val intent = Intent(Intent.ACTION_DIAL)
 
-        val uniqueDates = ArrayList<String>()
+            intent.data = Uri.parse("tel:${selectedDoctor?.mobile}")
+
+
+                startActivity(intent)
+
+        }
+        val uniqueDates = ArrayList<Pair<Int, String>>()
 
         if (selectedDoctor != null) {
             val dateFormatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            val currentDate = Date() // Current date
 
+            for (position in selectedDoctor.timing.indices) {
+                val dateStr = selectedDoctor.timing[position].time
 
-            for (timing in selectedDoctor.timing) {
-
-                    val dateStr = timing.time
-
-                    try {
-                        val date = dateFormatter.parse(dateStr)
-                        if (date != null) {
-
-
-                                uniqueDates.add(dateStr)
-
-                        }
-                    } catch (e: ParseException) {
-                        // Handle parsing exceptions if any
-                        e.printStackTrace()
+                try {
+                    val date = dateFormatter.parse(dateStr)
+                    if (date != null && date >= currentDate) {
+                        uniqueDates.add(Pair(position, dateStr))
                     }
+                } catch (e: ParseException) {
+                    // Handle parsing exceptions if any
+                    e.printStackTrace()
                 }
-
+            }
         }
+
+
+
 
         val datesList = getDatesList()
         dayuiset(selectedDoctor,uniqueDates)
@@ -164,7 +146,7 @@ class DoctorDescriptionActivity : BaseActivity() {
         mdoctorDetails = doctor
     }
 
-    private fun dayuiset(selectedDoctor: Doctor?, datesList: List<String>) {
+    private fun dayuiset(selectedDoctor: Doctor?, datesList: ArrayList<Pair<Int, String>>) {
         val rv_day_list = findViewById<RecyclerView>(R.id.dayrecyclerview)
         val timingRecyclerView = findViewById<RecyclerView>(R.id.timingrecyclerview)
         val workingHoursTextView = findViewById<TextView>(R.id.working_time)
@@ -180,8 +162,8 @@ class DoctorDescriptionActivity : BaseActivity() {
             override fun onClick(position: Int) {
                 if (mpositiondate != position) {
                     // When a new date is selected, show the timing RecyclerView and "Working Hours" TextView
-                    dayselected = datesList[position]
-                    mpositiondate = position
+                    dayselected = datesList[position].second
+                    mpositiondate = datesList[position].first
                     timingRecyclerView.visibility = View.VISIBLE
                     workingHoursTextView.visibility = View.VISIBLE
 
@@ -189,7 +171,7 @@ class DoctorDescriptionActivity : BaseActivity() {
                     var workingtime: ArrayList<SlotAvailability> = ArrayList()
 
                     if (selectedDoctor != null && position >= 0 && position < selectedDoctor.timing.size) {
-                        val timing = selectedDoctor.timing[position]
+                        val timing = selectedDoctor.timing[mpositiondate]
                         workingtime.addAll(timing.dateSlotMap)
 
                         // Define a custom comparator to sort based on the time field
@@ -403,12 +385,12 @@ class DoctorDescriptionActivity : BaseActivity() {
                                 SendNotificationToUserAsyncTask(mdoctorDetails.name,muserDetails.fcmToken ).execute()
 //
                                 val twilioApiService = createTwilioApiService()
-                                val toPhoneNumber = "+"+mdoctorDetails.mobile.toString()  // Replace with the recipient's phone number
+                                val toPhoneNumber = "+91"+mdoctorDetails.mobile.toString()  // Replace with the recipient's phone number
                                 val fromPhoneNumber = "+14043345873" // Replace with your Twilio phone number
                                 val message = "Appointment with ${muserDetails.name} on ${dayselected} Time:${timeselected}"
 
                                 val twilioApiServiceuser = createTwilioApiService()
-                                val toPhoneNumberuser = "+"+muserDetails.mobile.toString()  // Replace with the recipient's phone number
+                                val toPhoneNumberuser = "+91"+muserDetails.mobile.toString()  // Replace with the recipient's phone number
                                 val fromPhoneNumberuser = "+14043345873" // Replace with your Twilio phone number
                                 val messageuser = "Appointment with ${mdoctorDetails.name} on ${dayselected} Time:${timeselected}"
 

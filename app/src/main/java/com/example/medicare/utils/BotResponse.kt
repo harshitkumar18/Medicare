@@ -1,15 +1,24 @@
 package com.example.medicare.utils
 
 
+import android.util.Log
+import com.example.medicare.Firebase.FirestoreClass
+import com.example.medicare.models.Appointment
+import com.example.medicare.models.AppointmentUser
+import com.example.medicare.models.Doctor
+import com.example.medicare.models.User
 import com.example.medicare.utils.Constants.OPEN_GOOGLE
 import com.example.medicare.utils.Constants.OPEN_SEARCH
+import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.tasks.await
 import java.sql.Date
 import java.sql.Timestamp
 import java.text.SimpleDateFormat
+import java.util.Locale
 
 object BotResponse {
 
-    fun basicResponses(_message: String): Any {
+    suspend fun basicResponses(_message: String): Any {
 
         val random = (0..2).random()
         val message =_message.toLowerCase()
@@ -125,10 +134,80 @@ object BotResponse {
                         "4. Unexplained weight loss\n" +
                         "5. Shortness of breath"
             }
+            message.contains("thanks") || (message.contains("thank you") || (message.contains("ok")) ) -> {
+                "Have a Nice Day"
+            }
+           message.contains("Today My Appointments") ||( message.contains("my appointments") || message.contains("Any appointment") )->{
+               var ans = ""
+
+               val documentSnapshot = FirebaseFirestore.getInstance()
+                   .collection(Constants.USERS)
+                   .document(FirestoreClass().getCurrentUserID())
+                   .get()
+                   .await()
+
+               val userDetails = documentSnapshot.toObject(User::class.java)
+
+               if (userDetails != null) {
+                   val appointmentdetails = userDetails.userappointment
+                   val currentDate = Date(System.currentTimeMillis())
+                   val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                   val timeFormat = SimpleDateFormat("hh:mm a", Locale.getDefault())
+
+                   val upcomingAppointments = appointmentdetails.filter { appointment ->
+                       val appointmentDate = dateFormat.parse(appointment.date)
+
+                       if (appointmentDate.after(currentDate)) {
+                           true
+                       } else {
+                           val appointmentTime = timeFormat.parse(appointment.time)
+                           val currentTime = timeFormat.parse(timeFormat.format(java.util.Date()))
+
+                           if (dateFormat.format(appointmentDate) == dateFormat.format(currentDate)) {
+                               if (appointmentTime < currentTime) {
+                                   false
+                               } else {
+                                   true
+                               }
+                           } else {
+                               false
+                           }
+                       }
+                   }
 
 
-            //What time is it?
-            message.contains("time") && message.contains("?")-> {
+                   if (upcomingAppointments.isEmpty()) {
+                       ans = "You have No Upcoming Appointment"
+                   } else {
+                       val doctorDetailsList = mutableListOf<Doctor>()
+
+                       for (appointment in upcomingAppointments) {
+                           val doctorDocument = FirebaseFirestore.getInstance()
+                               .collection(Constants.DOCTOR)
+                               .document(appointment.doctor_id)
+                               .get()
+                               .await()
+
+                           val doctor = doctorDocument.toObject(Doctor::class.java)
+                           doctor?.let {
+                               doctorDetailsList.add(it)
+                           }
+                       }
+
+                       ans = upcomingAppointments.mapIndexed { index, it ->
+                           "Your Booking Id: ${it.id} on ${it.date}, Timing: ${it.time} with  ${doctorDetailsList.getOrNull(index)?.name} \n"
+                       }.joinToString("\n")
+                   }
+               }
+
+// Handle the response or return the result as needed within your app.
+// For example, you can send 'ans' to a chat interface or display it to the user.
+
+// If this code is part of a function, you may need to replace the "return ans" statement with appropriate code to deliver or display the response
+               return ans
+            }
+
+                message.contains("time") && message.contains("?")-> {
                 val timeStamp = Timestamp(System.currentTimeMillis())
                 val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm")
                 val date = sdf.format(Date(timeStamp.time))
