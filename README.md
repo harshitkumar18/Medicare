@@ -17,6 +17,8 @@ Keywords: Kotlin, Firebase, Glide, Twilio API, News API, Retrofit, Volley
 
 
 ## Screenshots
+![resize-17036167151669190483IMG20231227DSFGH](https://github.com/harshitkumar18/Medicare/assets/136173522/8f6cb07c-937e-4a2a-ba23-d526d336c397)
+
 ![resize-1703613978677569803IMG20231226WA0028](https://github.com/harshitkumar18/Medicare/assets/136173522/b81bd450-0938-4afa-87d0-7f7238aab3f6)                            ![resize-170361423240616016IMG20231226WA0036](https://github.com/harshitkumar18/Medicare/assets/136173522/d1506ef0-1dcb-4599-bbf8-64f071477cc5)   ![resize-170361408340378531IMG20231226WA0027](https://github.com/harshitkumar18/Medicare/assets/136173522/266f55fb-7bbb-447e-ae39-4ccb71c166fb)    
 
 
