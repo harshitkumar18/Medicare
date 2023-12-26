@@ -24,7 +24,9 @@ Keywords: Kotlin, Firebase, Glide, Twilio API, News API, Retrofit, Volley
 
 ![resize-17036146901028901228IMG20231226WA0032](https://github.com/harshitkumar18/Medicare/assets/136173522/2bb0c5d4-d160-4ece-af76-6c5eaf2e0f3c)   ![resize-1703614723556975884IMG20231226WA0033](https://github.com/harshitkumar18/Medicare/assets/136173522/3bb2f47c-83e3-409b-8416-6f270c026111)   ![resize-1703615142562905664IMG20231226WA0034](https://github.com/harshitkumar18/Medicare/assets/136173522/4eacf48c-0d5a-4394-ab6c-8d8d932dde5a)
 
-![resize-1703615192451289281IMG20231226WA0035](https://github.com/harshitkumar18/Medicare/assets/136173522/fb1d76c1-14c0-4356-a52d-e0274b788bf5)    ![resize-17036157551006228300IMG20231226HJHHJ](https://github.com/harshitkumar18/Medicare/assets/136173522/03a13512-5332-4157-be76-2d6d0f712f59)
+![resize-1703615192451289281IMG20231226WA0035](https://github.com/harshitkumar18/Medicare/assets/136173522/fb1d76c1-14c0-4356-a52d-e0274b788bf5)    ![resize-17036157551006228300IMG20231226HJHHJ](https://github.com/harshitkumar18/Medicare/assets/136173522/03a13512-5332-4157-be76-2d6d0f712f59) ![resize-17036164602041438804IMG20231227FDGH](https://github.com/harshitkumar18/Medicare/assets/136173522/95492dd3-0056-4a3a-b446-eecaa7c370d1)
+
+
 
 
 
