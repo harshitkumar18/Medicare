@@ -10,6 +10,7 @@ import android.webkit.WebViewClient
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import com.example.medicare.R
+import okhttp3.WebSocket
 
 class ChatBot : AppCompatActivity() {
     private lateinit var mProgressDialog: Dialog
@@ -85,4 +86,5 @@ class ChatBot : AppCompatActivity() {
             finish()
         }
     }
+
 }

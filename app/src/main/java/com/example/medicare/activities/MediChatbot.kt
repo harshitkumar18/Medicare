@@ -224,4 +224,13 @@ private fun botResponse(message: String) {
             }
         }
     }
+    override fun onBackPressed() {
+        super.onBackPressed()
+
+        // Navigate to MainActivity with the home menu item selected
+        val intent = Intent(this, MainActivity::class.java)
+        intent.putExtra("selectedItemId", R.id.home) // Pass the ID of the home menu item
+        startActivity(intent)
+        finish()
+    }
 }

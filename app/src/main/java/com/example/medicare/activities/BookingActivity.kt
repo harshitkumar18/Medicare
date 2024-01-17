@@ -9,6 +9,9 @@ import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.AdapterView
+import android.widget.Spinner
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -40,16 +43,32 @@ class BookingActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_booking)
         setupActionBar()
-        FirestoreClass().getuserDetailsinbooking(this, FirestoreClass().getCurrentUserID())
-        showProgressDialog("Please Wait")
+        val spinnerFilter = findViewById<Spinner>(R.id.spinner_filter_appointment)
+
+        // Set up a listener for Spinner item selection
+        spinnerFilter.setOnItemSelectedListener(object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parentView: AdapterView<*>, selectedItemView: View?, position: Int, id: Long) {
+                // Get the selected filter text
+                val selectedFilter = parentView.getItemAtPosition(position).toString()
+
+                // Call FirestoreClass().getappointmenthistoryList with the new selected filter
+                FirestoreClass().getuserDetailsinbooking(this@BookingActivity, FirestoreClass().getCurrentUserID(),selectedFilter)
+                showProgressDialog("Please Wait")
+
+            }
+
+            override fun onNothingSelected(parentView: AdapterView<*>) {
+                // Do nothing if nothing is selected
+            }
+        })
 
 
     }
-    fun userDetails(user: User){
-        muserDetails = user
-        hideProgressDialog()
-        populateDoctorsListToUI(muserDetails)
-    }
+//    fun userDetails(user: User){
+//        muserDetails = user
+//        hideProgressDialog()
+//        populateDoctorsListToUI(muserDetails)
+//    }
     private fun setupActionBar() {
         val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar_bookings)
         setSupportActionBar(toolbar)
@@ -127,13 +146,13 @@ class BookingActivity : AppCompatActivity() {
 // Sort the appointmentList using the customComparator
 
 
-    fun populateDoctorsListToUI(user:User) {
+    fun populateDoctorsListToUI(userbookings:ArrayList<AppointmentUser>) {
         hideProgressDialog()
-        var userbookings: ArrayList<AppointmentUser> = ArrayList()
-        userbookings = user.userappointment
+
+
         userbookings.sortWith(customComparator)
 
-        Log.e("populateBoardsListToUI", "Doctor List: $user")
+//        Log.e("populateBoardsListToUI", "Doctor List: $user")
         val rv_speciality_list = findViewById<RecyclerView>(R.id.bookingsRecyclerView)
         rv_speciality_list.layoutManager = LinearLayoutManager(this@BookingActivity)
 
@@ -162,7 +181,7 @@ class BookingActivity : AppCompatActivity() {
     }
     fun updatelist(){
         showProgressDialog("Please Wait")
-        FirestoreClass().getuserDetailsinbooking(this, FirestoreClass().getCurrentUserID())
+        FirestoreClass().getuserDetailsinbooking(this, FirestoreClass().getCurrentUserID(), selectedfilter = "Active")
     }
 
 }

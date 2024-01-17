@@ -1,6 +1,6 @@
 package com.example.medicare.activities
 import kotlin.random.Random
-class UniqueRandomIdGenerator {
+class   UniqueRandomIdGenerator {
     private val usedIds = mutableSetOf<String>()
 
     fun generateUniqueRandomId(min: Int, max: Int): String {

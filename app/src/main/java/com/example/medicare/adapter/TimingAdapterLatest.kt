@@ -18,7 +18,7 @@ import java.util.Locale
 
 class TimingAdapterLatest(
     private val selectedDatePosition: Int,
-    private val data: List<SlotAvailability>,private val dateslot: List<Timing>,
+    private val timeslot: ArrayList<String>,
     private val context: Context
 ) :
     RecyclerView.Adapter<TimingAdapterLatest.ViewHolder>() {
@@ -37,7 +37,7 @@ class TimingAdapterLatest(
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val cardView: CardView = itemView.findViewById(R.id.timing_view_latest_item)
         val textView: TextView = itemView.findViewById(R.id.texttiming)
-        val slots: TextView = itemView.findViewById(R.id.slotsTextView)
+//        val slots: TextView = itemView.findViewById(R.id.slotsTextView)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -47,22 +47,17 @@ class TimingAdapterLatest(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = data[position]
-        holder.textView.text = item.date
-        val dateselected = dateslot[selectedDatePosition].time
-        if (item.remainingSlots.toInt() == 0) {
-            // No slots available
-            holder.slots.text = "No slots available"
-            holder.cardView.isEnabled = false // Disable the cardView
-            holder.cardView.setCardBackgroundColor(Color.parseColor("#CCCCCC")) // Grey color
-        } else {
-            holder.slots.text = "Slots Available: ${item.remainingSlots}"
+        val item = timeslot[position]
+        holder.textView.text = item
+//        val dateselected = dateslot[selectedDatePosition].time
+
+//            holder.slots.text = "Slots Available: ${item.remainingSlots}"
             holder.cardView.isEnabled = true // Enable the cardView
             holder.cardView.setCardBackgroundColor(Color.parseColor("#FFFFFF")) // White color
-        }
+
 
         holder.cardView.setOnClickListener {
-            if (item.remainingSlots.toInt() > 0) {
+
                 val previousSelectedPosition = selectedPosition
                 if (position == selectedPosition) {
                     selectedPosition = RecyclerView.NO_POSITION
@@ -73,7 +68,7 @@ class TimingAdapterLatest(
                 notifyItemChanged(selectedPosition)
 
                 listener?.onClick(position)
-            }
+
         }
 
         if (position == selectedPosition) {
@@ -84,6 +79,6 @@ class TimingAdapterLatest(
 
 
     override fun getItemCount(): Int {
-        return data.size
+        return timeslot.size
     }
 }

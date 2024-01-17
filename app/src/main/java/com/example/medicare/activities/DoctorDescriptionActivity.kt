@@ -69,11 +69,12 @@ class DoctorDescriptionActivity : BaseActivity() {
     var mdoctorDetails: Doctor = Doctor()
     var datelistnew: ArrayList<String> = ArrayList()
     object TwilioConstants {
-        const val ACCOUNT_SID = "ACade57ae65880ce3b2511b46976c6e3f0"
+        const val ACCOUNT_SID = "AC1542348d589358433f4e7c84963c0ea8"
         const val AUTH_TOKEN = "1bbf43a7e99968e916acf6e669024360"
         const val FROM_PHONE_NUMBER = "+14043345873"
     }
 
+    @SuppressLint("SuspiciousIndentation")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -129,7 +130,7 @@ class DoctorDescriptionActivity : BaseActivity() {
 
 
         val datesList = getDatesList()
-        dayuiset(selectedDoctor,uniqueDates)
+        dayuiset(selectedDoctor,datesList)
 
         findViewById<Button>(R.id.btn_book_appointment).setOnClickListener {
             if (selectedDoctor != null) {
@@ -146,7 +147,7 @@ class DoctorDescriptionActivity : BaseActivity() {
         mdoctorDetails = doctor
     }
 
-    private fun dayuiset(selectedDoctor: Doctor?, datesList: ArrayList<Pair<Int, String>>) {
+    private fun dayuiset(selectedDoctor: Doctor?, datesList: List<String>) {
         val rv_day_list = findViewById<RecyclerView>(R.id.dayrecyclerview)
         val timingRecyclerView = findViewById<RecyclerView>(R.id.timingrecyclerview)
         val workingHoursTextView = findViewById<TextView>(R.id.working_time)
@@ -162,21 +163,19 @@ class DoctorDescriptionActivity : BaseActivity() {
             override fun onClick(position: Int) {
                 if (mpositiondate != position) {
                     // When a new date is selected, show the timing RecyclerView and "Working Hours" TextView
-                    dayselected = datesList[position].second
-                    mpositiondate = datesList[position].first
+                    dayselected = datesList[position]
+//                    mpositiondate = datesList[position].first
                     timingRecyclerView.visibility = View.VISIBLE
                     workingHoursTextView.visibility = View.VISIBLE
 
                     // Update the timing RecyclerView with the new selected date position
                     var workingtime: ArrayList<SlotAvailability> = ArrayList()
 
-                    if (selectedDoctor != null && position >= 0 && position < selectedDoctor.timing.size) {
-                        val timing = selectedDoctor.timing[mpositiondate]
-                        workingtime.addAll(timing.dateSlotMap)
+                    if (selectedDoctor != null && position >= 0 && position < datesList.size) {
 
                         // Define a custom comparator to sort based on the time field
 
-                        timinguiset(workingtime,selectedDoctor.timing)
+                        timinguiset(selectedDoctor.timeslots)
                     }
                 } else {
                     // When the same date is selected again (deselected), hide the timing RecyclerView and "Working Hours" TextView
@@ -216,7 +215,7 @@ class DoctorDescriptionActivity : BaseActivity() {
             .into(nav_user_image)
     }
 
-    fun timinguiset(timinglist: ArrayList<SlotAvailability>,slotlist: ArrayList<Timing>) {
+    fun timinguiset(slotlist: ArrayList<String>) {
         val rv_timing_list = findViewById<RecyclerView>(R.id.timingrecyclerview)
 
         val layoutManager =
@@ -225,13 +224,13 @@ class DoctorDescriptionActivity : BaseActivity() {
         rv_timing_list.setHasFixedSize(true)
 
         // Pass the selected date position to TimingAdapterLatest
-        val adapter = TimingAdapterLatest(mpositiondate, timinglist,  slotlist,this@DoctorDescriptionActivity)
+        val adapter = TimingAdapterLatest(mpositiondate, slotlist,this@DoctorDescriptionActivity)
         rv_timing_list.adapter = adapter
 
         adapter.setOnClickListener(object :
             TimingAdapterLatest.OnClickListener {
             override fun onClick(position: Int) {
-                timeselected = timinglist[position].date
+                timeselected = slotlist[position]
                 mposition = position
             }
         })
@@ -328,17 +327,17 @@ class DoctorDescriptionActivity : BaseActivity() {
                         appointment_by_user.timestamp = currentTimeMillis // Store the current timestamp
 
                         // Parse the values as integers
-                        if (mpositiondate >= 0 && mpositiondate < mdoctorDetails.timing.size) {
-                            var remainingSlot = mdoctorDetails.timing[mpositiondate].dateSlotMap[mposition].remainingSlots.toInt()
-                            var totalBookedSlot = mdoctorDetails.timing[mpositiondate].dateSlotMap[mposition].totalBookedSlots.toInt()
-
-                            remainingSlot -= 1
-                            totalBookedSlot += 1
-
-                            // Update the values in the specific Timing object
-                            mdoctorDetails.timing[mpositiondate].dateSlotMap[mposition].remainingSlots = remainingSlot.toString()
-                            mdoctorDetails.timing[mpositiondate].dateSlotMap[mposition].totalBookedSlots = totalBookedSlot.toString()
-                        }
+//                        if (mpositiondate >= 0 && mpositiondate < mdoctorDetails.timing.size) {
+//                            var remainingSlot = mdoctorDetails.timing[mpositiondate].dateSlotMap[mposition].remainingSlots.toInt()
+//                            var totalBookedSlot = mdoctorDetails.timing[mpositiondate].dateSlotMap[mposition].totalBookedSlots.toInt()
+//
+//                            remainingSlot -= 1
+//                            totalBookedSlot += 1
+//
+//                            // Update the values in the specific Timing object
+//                            mdoctorDetails.timing[mpositiondate].dateSlotMap[mposition].remainingSlots = remainingSlot.toString()
+//                            mdoctorDetails.timing[mpositiondate].dateSlotMap[mposition].totalBookedSlots = totalBookedSlot.toString()
+//                        }
 
                         timing_user = mdoctorDetails.timing
 
@@ -386,12 +385,12 @@ class DoctorDescriptionActivity : BaseActivity() {
 //
                                 val twilioApiService = createTwilioApiService()
                                 val toPhoneNumber = "+91"+mdoctorDetails.mobile.toString()  // Replace with the recipient's phone number
-                                val fromPhoneNumber = "+14043345873" // Replace with your Twilio phone number
+                                val fromPhoneNumber = "+12023354219" // Replace with your Twilio phone number
                                 val message = "Appointment with ${muserDetails.name} on ${dayselected} Time:${timeselected}"
 
                                 val twilioApiServiceuser = createTwilioApiService()
                                 val toPhoneNumberuser = "+91"+muserDetails.mobile.toString()  // Replace with the recipient's phone number
-                                val fromPhoneNumberuser = "+14043345873" // Replace with your Twilio phone number
+                                val fromPhoneNumberuser = "+12023354219" // Replace with your Twilio phone number
                                 val messageuser = "Appointment with ${mdoctorDetails.name} on ${dayselected} Time:${timeselected}"
 
 // You should run this in a background thread or coroutine to avoid blocking the UI thread.
@@ -457,7 +456,7 @@ class DoctorDescriptionActivity : BaseActivity() {
     }
 
     fun getDatesList(): List<String> {
-        val dateFormat = SimpleDateFormat("dd EEE", Locale.getDefault())
+        val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
         val calendar = Calendar.getInstance()
         val datesList = mutableListOf<String>()
 
@@ -633,10 +632,7 @@ class DoctorDescriptionActivity : BaseActivity() {
                     }
                     result = sb.toString()
                 } else {
-                    /**
-                     * Gets the HTTP response message, if any, returned along with the
-                     * response code from a server.
-                     */
+
                     result = connection.responseMessage
                 }
 

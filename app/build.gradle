@@ -52,20 +52,20 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1'
     implementation 'androidx.navigation:navigation-fragment-ktx:2.7.1'
     implementation 'androidx.navigation:navigation-ui-ktx:2.7.1'
-    implementation 'com.google.firebase:firebase-messaging-ktx:23.2.1'
+    implementation 'com.google.firebase:firebase-messaging-ktx:23.3.1'
     testImplementation 'junit:junit:4.13.2'
     implementation platform('com.google.firebase:firebase-bom:32.1.1')
-    implementation 'com.google.firebase:firebase-auth:22.0.0' //firebase
+    implementation 'com.google.firebase:firebase-auth:22.3.0' //firebase
     implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation 'com.google.firebase:firebase-storage:20.2.1'
     implementation platform('com.google.firebase:firebase-bom:32.1.1')
     implementation 'com.github.bumptech.glide:glide:4.11.0' // set profile image
     implementation 'com.github.bumptech.glide:compiler:4.11.0' // set profile image
     implementation 'de.hdodenhof:circleimageview:3.1.0' // rounded images
-    implementation 'com.google.firebase:firebase-firestore:24.6.1' // database firestore
+    implementation 'com.google.firebase:firebase-firestore:24.9.1' // database firestore
     implementation 'com.google.android.material:material:1.9.0'
     implementation 'com.airbnb.android:lottie:4.0.0'
-    implementation 'com.google.firebase:firebase-messaging:23.1.2' //   Notification feature
+    implementation 'com.google.firebase:firebase-messaging:23.3.1' //   Notification feature
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 
@@ -78,6 +78,8 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.9.1")
     implementation 'org.apache.httpcomponents:httpclient:4.5.13'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+
+
 
 
 

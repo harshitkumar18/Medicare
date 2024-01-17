@@ -134,10 +134,10 @@ object BotResponse {
                         "4. Unexplained weight loss\n" +
                         "5. Shortness of breath"
             }
-            message.contains("thanks") || (message.contains("thank you") || (message.contains("ok")) ) -> {
-                "Have a Nice Day"
-            }
-           message.contains("Today My Appointments") ||( message.contains("my appointments") || message.contains("Any appointment") )->{
+//            message.contains("thanks") || (message.contains("thank you") || (message.contains("ok")) ) -> {
+//                "Have a Nice Day"
+//            }
+           message.contains("my bookings") ||( message.contains("My bookings") ||  ( message.contains("todays appointments ") || message.contains("appointment") ))->{
                var ans = ""
 
                val documentSnapshot = FirebaseFirestore.getInstance()
@@ -206,6 +206,9 @@ object BotResponse {
 // If this code is part of a function, you may need to replace the "return ans" statement with appropriate code to deliver or display the response
                return ans
             }
+            message.contains("thanks") || (message.contains("bye") || message.contains("thank"))  -> {
+                "Have a Nice Today"
+            }
 
                 message.contains("time") && message.contains("?")-> {
                 val timeStamp = Timestamp(System.currentTimeMillis())
@@ -214,6 +217,7 @@ object BotResponse {
 
                 date.toString()
             }
+
 
             //Open Google
             message.contains("open") && message.contains("google")-> {

@@ -16,7 +16,9 @@ data class User(
     val diabetic: String = "",
     val gender: String = "",
     val fcmToken: String = "",
-    val userappointment: ArrayList<AppointmentUser> = ArrayList()
+    val userappointment: ArrayList<AppointmentUser> = ArrayList(),
+    val bookingappointment: ArrayList<AppointmentUser> = ArrayList(),
+    val expiredappointment: ArrayList<AppointmentUser> = ArrayList()
 ) : Parcelable {
     constructor(source: Parcel) : this(
         source.readString()!!,
@@ -31,7 +33,10 @@ data class User(
         source.readString()!!,
         source.readString()!!,
         source.readString()!!,
+        source.createTypedArrayList(AppointmentUser.CREATOR) ?: ArrayList(),
+        source.createTypedArrayList(AppointmentUser.CREATOR) ?: ArrayList(),
         source.createTypedArrayList(AppointmentUser.CREATOR) ?: ArrayList()
+
     )
 
     override fun describeContents() = 0
@@ -50,6 +55,9 @@ data class User(
         writeString(gender)
         writeString(fcmToken)
         writeTypedList(userappointment)
+        writeTypedList(bookingappointment)
+        writeTypedList(expiredappointment)
+
     }
 
     companion object {

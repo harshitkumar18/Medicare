@@ -5,6 +5,7 @@ import android.app.Activity
 import android.util.Log
 import android.widget.Toast
 import com.example.medicare.activities.*
+import com.example.medicare.models.AppointmentUser
 import com.example.medicare.models.Doctor
 import com.example.medicare.models.Speciality
 
@@ -121,7 +122,7 @@ class FirestoreClass {
     fun updatedoctordetails(activity: DoctorDescriptionActivity,doctorHashMap: HashMap<String, Any>,documentId: String) {
     mfirestore.collection(Constants.DOCTOR) // Collection Name
         .document(documentId) // Document ID
-        .update(doctorHashMap) // A hashmap of fields which are to be updated.
+        .update(doctorHashMap) // A hashm  ap of fields which are to be updated.
         .addOnSuccessListener {
             // Profile data is updated successfully.
             Log.e(activity.javaClass.simpleName, "Profile Data updated successfully!")
@@ -189,17 +190,37 @@ class FirestoreClass {
                 Log.e(activity.javaClass.simpleName, "Error while creating a board.", e)
             }
     }
-    fun getuserDetailsinbooking(activity: BookingActivity, documentId: String) {
+    fun getuserDetailsinbooking(activity: BookingActivity, documentId: String,selectedfilter:String) {
+        val fieldPath =
+         if(selectedfilter == "Active"){
+            "userappointment"
+        }
+            else if (selectedfilter == "Successful") {
+            "bookingappointment"
+        }
+
+            else {
+            "expiredappointment"
+        }
         mfirestore.collection(Constants.USERS)
             .document(documentId)
             .get()
             .addOnSuccessListener { document ->
                 Log.e(activity.javaClass.simpleName, document.toString())
 
-                val board = document.toObject(User::class.java)!!
+                val loggedInUser = document.toObject(User::class.java)!!
+                var bookedarraylist: ArrayList<AppointmentUser>? = null
+                bookedarraylist = when (fieldPath) {
+                    "bookingappointment" -> loggedInUser.bookingappointment
+                    "expiredappointment" -> loggedInUser.expiredappointment
+                    "userappointment" -> loggedInUser.userappointment
+                    else -> null
+                }
 
                 // Send the result of board to the base activity.
-                activity.userDetails(board)
+                if (bookedarraylist != null) {
+                    activity.populateDoctorsListToUI(bookedarraylist)
+                }
             }
             .addOnFailureListener { e ->
                 activity.hideProgressDialog()

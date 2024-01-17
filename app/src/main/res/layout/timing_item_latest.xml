@@ -27,19 +27,9 @@
             android:padding="8dp"
             android:textSize="16sp" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#000000" /> <!-- This is the line below texttiming -->
 
-        <TextView
-            android:id="@+id/slotsTextView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="Another"
-            android:gravity="center"
-            android:padding="8dp"
-            android:textSize="16sp" />
+
+
 
     </LinearLayout>
 </androidx.cardview.widget.CardView>
