@@ -20,6 +20,7 @@ import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+
 import com.example.medicare.Firebase.FirestoreClass
 import com.example.medicare.R
 import com.example.medicare.activities.DoctorDescriptionActivity.TwilioConstants.ACCOUNT_SID
@@ -103,6 +104,9 @@ class DoctorDescriptionActivity : BaseActivity() {
 
 
                 startActivity(intent)
+//            val intent = Intent(this,UserNameActivity::class.java)
+//            intent.putExtra("id",selectedDoctor?.documentId)
+//            startActivity(intent)
 
         }
         val uniqueDates = ArrayList<Pair<Int, String>>()

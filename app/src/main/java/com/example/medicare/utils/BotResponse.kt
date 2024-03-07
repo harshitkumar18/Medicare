@@ -1,8 +1,17 @@
 package com.example.medicare.utils
 
 
+import android.app.Dialog
+import android.content.Context
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.util.Log
+import android.widget.Toast
 import com.example.medicare.Firebase.FirestoreClass
+import com.example.medicare.R
+import com.example.medicare.activities.MedichatbotResponse
+import com.example.medicare.activities.QuestionPayload
+import com.example.medicare.activities.createMedichatbotApi
 import com.example.medicare.models.Appointment
 import com.example.medicare.models.AppointmentUser
 import com.example.medicare.models.Doctor
@@ -10,7 +19,12 @@ import com.example.medicare.models.User
 import com.example.medicare.utils.Constants.OPEN_GOOGLE
 import com.example.medicare.utils.Constants.OPEN_SEARCH
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
+import retrofit2.Call
 import java.sql.Date
 import java.sql.Timestamp
 import java.text.SimpleDateFormat
@@ -18,7 +32,7 @@ import java.util.Locale
 
 object BotResponse {
 
-    suspend fun basicResponses(_message: String): Any {
+    suspend fun basicResponses(_message: String, context: Context): Any {
 
         val random = (0..2).random()
         val message =_message.toLowerCase()
@@ -46,94 +60,97 @@ object BotResponse {
             }
 
             //Hello
-            message.contains("hello") -> {
-                when (random) {
-                    0 -> "Hello there!"
-                    1 -> "Sup"
-                    2 -> "Hello!!"
-                    else -> "error" }
-            }
+//            message.contains("hello") -> {
+//                when (random) {
+//                    0 -> "Hello there!"
+//                    1 -> "Sup"
+//                    2 -> "Hello!!"
+//                    else -> "error" }
+//            }
+//
 
-            //How are you?
-            message.contains("how are you") -> {
-                when (random) {
-                    0 -> "I'm doing fine, thanks!"
-                    1 -> "I'm hungry..."
-                    2 -> "Pretty good! How about you?"
-                    else -> "error"
-                }
-            }
-            message.contains("symptoms") && message.contains("fever") -> {
-                "Fever symptoms: \n" +
-                        "1. High body temperature\n" +
-                        "2. Chills and shivering\n" +
-                        "3. Sweating\n" +
-                        "4. Headache\n" +
-                        "5. Muscle aches\n" +
-                        "6. Fatigue\n" +
-                        "7. Loss of appetite\n" +
-                        "8. Dehydration\n" +
-                        "9. Elevated heart rate\n" +
-                        "10. Irritability"
+            // Other conditions...
 
-            }
-            // Common Cold
-            message.contains("symptoms") && (message.contains("cold") || message.contains("common cold")) -> {
-                "Common cold symptoms:\n" +
-                        "1. Runny or stuffy nose\n" +
-                        "2. Sneezing\n" +
-                        "3. Coughing\n" +
-                        "4. Sore throat\n" +
-                        "5. Mild headache\n" +
-                        "6. Fatigue\n" +
-                        "7. Watery eyes\n" +
-                        "8. Low-grade fever\n" +
-                        "9. Chest discomfort"
-            }
 
-            // Influenza (Flu)
-            message.contains("symptoms") && message.contains("flu") -> {
-                "Flu (Influenza) symptoms:\n" +
-                        "1. High fever\n" +
-                        "2. Chills\n" +
-                        "3. Muscle aches\n" +
-                        "4. Fatigue\n" +
-                        "5. Cough\n" +
-                        "6. Sore throat\n" +
-                        "7. Runny or stuffy nose\n" +
-                        "8. Headache\n" +
-                        "9. Vomiting and diarrhea (in some cases)"
-            }
-
-            // COVID-19 (Coronavirus)
-            message.contains("symptoms") && (message.contains("covid") || message.contains("coronavirus") || message.contains("corona")) -> {
-                "COVID-19 (Coronavirus) symptoms:\n" +
-                        "1. Fever\n" +
-                        "2. Dry cough\n" +
-                        "3. Shortness of breath or difficulty breathing\n" +
-                        "4. Fatigue\n" +
-                        "5. Muscle or body aches\n" +
-                        "6. Headache\n" +
-                        "7. New loss of taste or smell\n" +
-                        "8. Sore throat\n" +
-                        "9. Congestion or runny nose\n" +
-                        "10. Nausea or vomiting\n" +
-                        "11. Diarrhea"
-            }
-            message.contains("symptoms") && (message.contains("stroke") ) -> {
-                "Stroke symptoms: \n"+"1. Sudden numbness or weakness in the face, arm, or leg\n" +
-                        "2. Sudden confusion, trouble speaking, or understanding speech\n" +
-                        "3. Sudden trouble seeing in one or both eyes\n" +
-                        "4. Sudden trouble walking, dizziness, loss of balance, or lack of coordination\n" +
-                        "5. Sudden severe headache"
-            }
-            message.contains("symptoms") && (message.contains("lung cancer") ) -> {
-                "Lung Cancer symptoms: \n"+ "1. Persistent cough\n" +
-                        "2. Coughing up blood\n" +
-                        "3. Chest pain\n" +
-                        "4. Unexplained weight loss\n" +
-                        "5. Shortness of breath"
-            }
+//            message.contains("how are you") -> {
+//                when (random) {
+//                    0 -> "I'm doing fine, thanks!"
+//                    1 -> "I'm hungry..."
+//                    2 -> "Pretty good! How about you?"
+//                    else -> "error"
+//                }
+//            }
+//            message.contains("symptoms") && message.contains("fever") -> {
+//                "Fever symptoms: \n" +
+//                        "1. High body temperature\n" +
+//                        "2. Chills and shivering\n" +
+//                        "3. Sweating\n" +
+//                        "4. Headache\n" +
+//                        "5. Muscle aches\n" +
+//                        "6. Fatigue\n" +
+//                        "7. Loss of appetite\n" +
+//                        "8. Dehydration\n" +
+//                        "9. Elevated heart rate\n" +
+//                        "10. Irritability"
+//
+//            }
+//            // Common Cold
+//            message.contains("symptoms") && (message.contains("cold") || message.contains("common cold")) -> {
+//                "Common cold symptoms:\n" +
+//                        "1. Runny or stuffy nose\n" +
+//                        "2. Sneezing\n" +
+//                        "3. Coughing\n" +
+//                        "4. Sore throat\n" +
+//                        "5. Mild headache\n" +
+//                        "6. Fatigue\n" +
+//                        "7. Watery eyes\n" +
+//                        "8. Low-grade fever\n" +
+//                        "9. Chest discomfort"
+//            }
+//
+//            // Influenza (Flu)
+//            message.contains("symptoms") && message.contains("flu") -> {
+//                "Flu (Influenza) symptoms:\n" +
+//                        "1. High fever\n" +
+//                        "2. Chills\n" +
+//                        "3. Muscle aches\n" +
+//                        "4. Fatigue\n" +
+//                        "5. Cough\n" +
+//                        "6. Sore throat\n" +
+//                        "7. Runny or stuffy nose\n" +
+//                        "8. Headache\n" +
+//                        "9. Vomiting and diarrhea (in some cases)"
+//            }
+//
+//            // COVID-19 (Coronavirus)
+//            message.contains("symptoms") && (message.contains("covid") || message.contains("coronavirus") || message.contains("corona")) -> {
+//                "COVID-19 (Coronavirus) symptoms:\n" +
+//                        "1. Fever\n" +
+//                        "2. Dry cough\n" +
+//                        "3. Shortness of breath or difficulty breathing\n" +
+//                        "4. Fatigue\n" +
+//                        "5. Muscle or body aches\n" +
+//                        "6. Headache\n" +
+//                        "7. New loss of taste or smell\n" +
+//                        "8. Sore throat\n" +
+//                        "9. Congestion or runny nose\n" +
+//                        "10. Nausea or vomiting\n" +
+//                        "11. Diarrhea"
+//            }
+//            message.contains("symptoms") && (message.contains("stroke") ) -> {
+//                "Stroke symptoms: \n"+"1. Sudden numbness or weakness in the face, arm, or leg\n" +
+//                        "2. Sudden confusion, trouble speaking, or understanding speech\n" +
+//                        "3. Sudden trouble seeing in one or both eyes\n" +
+//                        "4. Sudden trouble walking, dizziness, loss of balance, or lack of coordination\n" +
+//                        "5. Sudden severe headache"
+//            }
+//            message.contains("symptoms") && (message.contains("lung cancer") ) -> {
+//                "Lung Cancer symptoms: \n"+ "1. Persistent cough\n" +
+//                        "2. Coughing up blood\n" +
+//                        "3. Chest pain\n" +
+//                        "4. Unexplained weight loss\n" +
+//                        "5. Shortness of breath"
+//            }
 //            message.contains("thanks") || (message.contains("thank you") || (message.contains("ok")) ) -> {
 //                "Have a Nice Day"
 //            }
@@ -219,6 +236,7 @@ object BotResponse {
             }
 
 
+
             //Open Google
             message.contains("open") && message.contains("google")-> {
                 OPEN_GOOGLE
@@ -231,13 +249,35 @@ object BotResponse {
 
             //When the programme doesn't understand...
             else -> {
-                when (random) {
-                    0 -> "I don't understand..."
-                    1 -> "Try asking me something different"
-                    2 -> "Idk"
-                    else -> "error"
+                val api = createMedichatbotApi()
+                val questionPayload = QuestionPayload(message)
+
+                // Create and show a custom dialog
+                val dialog = Dialog(context).apply {
+                    setContentView(R.layout.loading)
+                    setCancelable(false)  // Optional: Make the dialog not cancelable
+                    window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))  // Optional: Make background transparent
+                    show()
+                }
+
+                try {
+                    // Perform the network request
+                    val response = api.postQuestion(questionPayload)
+                    withContext(Dispatchers.Main) {
+                        Log.e("MedichatbotAPI", "Error: ${response.llm_response}")
+                        dialog.dismiss()  // Dismiss the dialog once response is received
+                        response.llm_response  // Assuming this is what you want to return
+                    }
+                } catch (e: Exception) {
+                    withContext(Dispatchers.Main) {
+                        dialog.dismiss()  // Ensure dialog is dismissed even on error
+                        Log.e("MedichatbotAPI", "Error: ${e.localizedMessage}")
+                        "Sorry, I can't process your request right now."
+                    }
                 }
             }
+
+
         }
     }
 }

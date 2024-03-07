@@ -45,7 +45,7 @@ class MediChatbot : AppCompatActivity() {
 //    private var sessionName: SessionName? = null
     private val uuid = UUID.randomUUID().toString()
     var messagesList = mutableListOf<Message>()
-    private val botList = listOf("Peter", "Francesca", "Luigi", "Igor")
+
     private lateinit var mProgressDialog: Dialog
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,8 +53,8 @@ class MediChatbot : AppCompatActivity() {
         recyclerView()
         clickEvents()
 
-        val random = (0..3).random()
-        customBotMessage("Hello! Today you're speaking with ${botList[random]}, how may I help?")
+
+        customBotMessage("Hello! , how may I help?")
     }
 
     private fun recyclerView() {
@@ -184,7 +184,7 @@ private fun botResponse(message: String) {
 
         withContext(Dispatchers.Main) {
             //Gets the response
-            val response = BotResponse.basicResponses(message)
+            val response = BotResponse.basicResponses(message,this@MediChatbot)
 
             //Adds it to our local list
             messagesList.add(Message(response, RECEIVE_ID, timeStamp))

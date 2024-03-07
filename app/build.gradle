@@ -3,6 +3,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'com.google.gms.google-services'
 
+
 }
 
 android {
@@ -53,6 +54,7 @@ dependencies {
     implementation 'androidx.navigation:navigation-fragment-ktx:2.7.1'
     implementation 'androidx.navigation:navigation-ui-ktx:2.7.1'
     implementation 'com.google.firebase:firebase-messaging-ktx:23.3.1'
+    implementation 'androidx.room:room-common:2.6.1'
     testImplementation 'junit:junit:4.13.2'
     implementation platform('com.google.firebase:firebase-bom:32.1.1')
     implementation 'com.google.firebase:firebase-auth:22.3.0' //firebase
@@ -78,7 +80,13 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.9.1")
     implementation 'org.apache.httpcomponents:httpclient:4.5.13'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.9.0'
+    implementation ('io.socket:socket.io-client:2.0.0') {
+        exclude group: 'org.json', module: 'json'
+    }
 
+    //gson
+    implementation 'com.google.code.gson:gson:2.10'
 
 
 
