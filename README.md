@@ -8,7 +8,7 @@ Streamlined user experience with doctor categorization, Google Maps for location
 real-time health updates through a news API.
 
 A Medicare doctor app
-(https://github.com/harshitkumar18MedicareDoctor.git)  for viewing, adding, and managing appointments, categorizing them as successful or expired.
+([https://github.com/harshitkumar18MedicareDoctor.git](https://github.com/harshitkumar18/MedicareDoctor.git))  for viewing, adding, and managing appointments, categorizing them as successful or expired.
 Doctors also have the ability to edit time slots
 
 Keywords: Kotlin, Firebase, Glide, Twilio API, News API, Retrofit, Volley
